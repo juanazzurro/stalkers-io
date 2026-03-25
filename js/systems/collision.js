@@ -18,7 +18,7 @@ class CollisionSystem {
         }
     }
 
-    static check(player, enemies, playerProj, enemyProj, xpOrbs) {
+    static check(player, enemies, playerProj, enemyProj, xpOrbs, stats) {
         // Player projectiles vs enemies
         for (const proj of playerProj) {
             if (proj.dead) continue;
@@ -30,6 +30,7 @@ class CollisionSystem {
                 if (!this.circleHit(proj.x, proj.y, pr, enemy.x, enemy.y, enemy.size)) continue;
 
                 enemy.takeDamage(proj.damage);
+                if (stats) stats.damageDealt += proj.damage;
                 proj.hitTargets.add(enemy);
 
                 // AOE
@@ -38,9 +39,11 @@ class CollisionSystem {
                         if (other === enemy || other.dying) continue;
                         if (this.circleHit(proj.x, proj.y, proj.aoeRadius, other.x, other.y, other.size)) {
                             other.takeDamage(proj.damage * 0.5);
+                            if (stats) stats.damageDealt += proj.damage * 0.5;
                             if (other.hp <= 0 && !other.dying) {
                                 other.die();
                                 this.spawnXP(other, xpOrbs);
+                                if (stats) { stats.kills++; stats.streak++; stats.bestStreak = Math.max(stats.bestStreak, stats.streak); }
                             }
                         }
                     }
@@ -49,6 +52,7 @@ class CollisionSystem {
                 if (enemy.hp <= 0 && !enemy.dying) {
                     enemy.die();
                     this.spawnXP(enemy, xpOrbs);
+                    if (stats) { stats.kills++; stats.streak++; stats.bestStreak = Math.max(stats.bestStreak, stats.streak); }
                 }
 
                 // Penetration
@@ -72,6 +76,7 @@ class CollisionSystem {
                 dmg *= (1 - player.data.passiveDmgReduction);
             }
             player.hp = Math.max(0, player.hp - dmg);
+            if (stats) stats.streak = 0;
             proj.dead = true;
         }
 
@@ -85,14 +90,17 @@ class CollisionSystem {
                 dmg *= (1 - player.data.passiveDmgReduction);
             }
             player.hp = Math.max(0, player.hp - dmg);
+            if (stats) stats.streak = 0;
             enemy.hp = 0;
             enemy.die();
             this.spawnXP(enemy, xpOrbs);
+            if (stats) { stats.kills++; stats.bestStreak = Math.max(stats.bestStreak, stats.streak); }
         }
     }
 
     static spawnXP(enemy, xpOrbs) {
         const totalXP = enemy.data.xpValue || 10;
+        const color = enemy.data.xpColor || '#ffd700';
         const count = 3;
         const value = Math.ceil(totalXP / count);
         for (let i = 0; i < count; i++) {
@@ -100,6 +108,7 @@ class CollisionSystem {
                 x: enemy.x + (Math.random() - 0.5) * 30,
                 y: enemy.y + (Math.random() - 0.5) * 30,
                 value: value,
+                color: color,
                 collected: false
             });
         }

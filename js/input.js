@@ -58,6 +58,11 @@ class InputHandler {
         return { x: dx, y: dy };
     }
 
+    clearInputs() {
+        this.shooting = false;
+        this.ability = false;
+    }
+
     updateMouse(camera) {
         this.mouseWorld = camera.screenToWorld(this.mouseScreen.x, this.mouseScreen.y);
     }

@@ -27,6 +27,12 @@ const ENEMIES = {
     COMMANDER: {
         hp: 300, damage: 15, speed: 2, fireRate: 1, range: 7,
         hitboxRadius: 25, color: '#444', bandanaColor: '#da0',
-        behavior: 'boss', shieldHp: 50, spawnInterval: 8000, xpValue: 100
+        behavior: 'boss', shieldHp: 50, spawnInterval: 8000, xpValue: 100,
+        xpColor: '#ff00ff'
+    },
+    BOSS_MINION: {
+        hp: 15, damage: 4, speed: 2.5, fireRate: 1, range: 4,
+        hitboxRadius: 13, color: '#666', bandanaColor: '#da0',
+        behavior: 'chase', xpValue: 4, xpColor: '#ff6600'
     }
 };
