@@ -68,6 +68,7 @@ class CollisionSystem {
         // Enemy projectiles vs player
         for (const proj of enemyProj) {
             if (proj.dead) continue;
+            if (player.invulnerable) continue;
             const pr = this.projRadius(proj.type);
             if (!this.circleHit(proj.x, proj.y, pr, player.x, player.y, player.size)) continue;
 
@@ -83,6 +84,7 @@ class CollisionSystem {
         // Kamikaze contact
         for (const enemy of enemies) {
             if (enemy.dying || enemy.data.behavior !== 'rush') continue;
+            if (player.invulnerable) continue;
             if (!this.circleHit(enemy.x, enemy.y, enemy.size, player.x, player.y, player.size)) continue;
 
             let dmg = enemy.data.explosionDamage || 40;

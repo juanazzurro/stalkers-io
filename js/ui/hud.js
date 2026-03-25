@@ -7,6 +7,7 @@ class HUD {
         this.drawBars(ctx, player);
         this.drawWaveInfo(ctx, waveManager, enemies);
         this.drawUpgradeIcons(ctx, player);
+        this.drawCooldown(ctx, player);
         this.drawMinimap(ctx, player, enemies, xpOrbs);
         this.drawPortrait(ctx, player);
     }
@@ -108,6 +109,59 @@ class HUD {
             ctx.fillStyle = '#fff';
             ctx.fillText(stat.level.toString(), ix + 12, iy + 14);
             ix += 32;
+        }
+    }
+
+    drawCooldown(ctx, player) {
+        const cx = 40;
+        const cy = this.canvas.height - 90;
+        const r = 20;
+        const cd = player.abilityCooldown;
+        const maxCd = player.abilityMaxCooldown;
+        const ready = cd <= 0;
+
+        // Background circle
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (ready) {
+            // Pulse glow
+            const pulse = 0.4 + Math.sin(Date.now() * 0.006) * 0.2;
+            ctx.strokeStyle = 'rgba(100, 200, 255, ' + pulse + ')';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.font = 'bold 9px monospace';
+            ctx.fillStyle = '#adf';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('SPACE', cx, cy);
+        } else {
+            // Sweep arc (remaining cooldown)
+            const ratio = cd / maxCd;
+            ctx.fillStyle = 'rgba(100, 200, 255, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + (1 - ratio) * Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#456';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Seconds remaining
+            ctx.font = 'bold 12px monospace';
+            ctx.fillStyle = '#aaa';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(Math.ceil(cd / 1000).toString(), cx, cy);
         }
     }
 

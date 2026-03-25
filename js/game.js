@@ -26,6 +26,9 @@ class Game {
 
         this.stats = { kills: 0, damageDealt: 0, streak: 0, bestStreak: 0, timeElapsed: 0, wave: 1, level: 1 };
         this.lastCharKey = null;
+        this.particles = new ParticleSystem();
+        this.shakeTimer = 0;
+        this.shakeIntensity = 0;
 
         this.wasClicked = false;
     }
@@ -38,6 +41,8 @@ class Game {
         this.xpOrbs = [];
         this.waveManager = new WaveManager(this.mapWidth, this.mapHeight);
         this.stats = { kills: 0, damageDealt: 0, streak: 0, bestStreak: 0, timeElapsed: 0, wave: 1, level: 1 };
+        this.particles.clear();
+        this.shakeTimer = 0;
         this.state = 'playing';
         this.input.clearInputs();
     }
@@ -132,6 +137,37 @@ class Game {
         const dir = this.input.getDirection();
         this.player.update(dir, this.input.mouseWorld, dt);
 
+        // Ability input
+        if (this.input.ability) {
+            const result = this.player.tryAbility(this.input.mouseWorld);
+            if (result === 'roar') {
+                // Bear roar: knockback + stun
+                for (const enemy of this.enemies) {
+                    if (enemy.dying) continue;
+                    const dx = enemy.x - this.player.x;
+                    const dy = enemy.y - this.player.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        const pushDist = 200;
+                        enemy.x += (dx / dist) * pushDist;
+                        enemy.y += (dy / dist) * pushDist;
+                        enemy.stunTimer = 1500;
+                    }
+                }
+                // Shockwave particles
+                this.particles.emit(this.player.x, this.player.y, 30, {
+                    color: '#ffffaa', speed: 6, life: 400, size: 4, shrink: true
+                });
+                this.particles.emit(this.player.x, this.player.y, 15, {
+                    color: '#fff', speed: 3, life: 300, size: 2, gravity: 0.1
+                });
+            }
+            if (result === 'charge') {
+                this.shakeTimer = 1500;
+                this.shakeIntensity = 3;
+            }
+        }
+
         // Player shooting
         if (this.input.shooting) {
             const proj = this.player.tryShoot(this.input.mouseWorld.x, this.input.mouseWorld.y);
@@ -167,6 +203,94 @@ class Game {
 
         // Collisions
         CollisionSystem.check(this.player, this.enemies, this.projectiles, this.enemyProjectiles, this.xpOrbs, this.stats);
+
+        // Mutant passive radiation
+        if (this.player.data.passiveRadius) {
+            for (const enemy of this.enemies) {
+                if (enemy.dying) continue;
+                const dx = enemy.x - this.player.x;
+                const dy = enemy.y - this.player.y;
+                if (dx * dx + dy * dy < this.player.data.passiveRadius * this.player.data.passiveRadius) {
+                    enemy.hp -= this.player.data.passiveDmg * dt / 1000;
+                    if (enemy.hp <= 0 && !enemy.dying) {
+                        enemy.die();
+                        CollisionSystem.spawnXP(enemy, this.xpOrbs);
+                        if (this.stats) { this.stats.kills++; this.stats.streak++; this.stats.bestStreak = Math.max(this.stats.bestStreak, this.stats.streak); }
+                    }
+                }
+            }
+        }
+
+        // Toxic pool damage
+        if (this.player.toxicPool) {
+            const pool = this.player.toxicPool;
+            for (const enemy of this.enemies) {
+                if (enemy.dying) continue;
+                const dx = enemy.x - pool.x;
+                const dy = enemy.y - pool.y;
+                if (dx * dx + dy * dy < pool.radius * pool.radius) {
+                    enemy.hp -= 5 * dt / 1000;
+                    if (enemy.hp <= 0 && !enemy.dying) {
+                        enemy.die();
+                        CollisionSystem.spawnXP(enemy, this.xpOrbs);
+                        if (this.stats) { this.stats.kills++; this.stats.streak++; this.stats.bestStreak = Math.max(this.stats.bestStreak, this.stats.streak); }
+                    }
+                }
+            }
+        }
+
+        // Oligarch rubles stun
+        if (this.player.rublesZone) {
+            const rz = this.player.rublesZone;
+            for (const enemy of this.enemies) {
+                if (enemy.dying) continue;
+                const dx = enemy.x - rz.x;
+                const dy = enemy.y - rz.y;
+                if (dx * dx + dy * dy < rz.radius * rz.radius) {
+                    enemy.stunTimer = Math.max(enemy.stunTimer, 100);
+                    // Slowly walk toward money
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist > 10) {
+                        enemy.x -= (dx / dist) * 0.5;
+                        enemy.y -= (dy / dist) * 0.5;
+                    }
+                }
+            }
+        }
+
+        // Tank charge collision
+        if (this.player.charging) {
+            for (const enemy of this.enemies) {
+                if (enemy.dying) continue;
+                if (this.player.chargeHitEnemies.has(enemy)) continue;
+                if (!CollisionSystem.circleHit(this.player.x, this.player.y, this.player.size, enemy.x, enemy.y, enemy.size)) continue;
+                enemy.hp -= 40;
+                this.player.chargeHitEnemies.add(enemy);
+                if (this.stats) this.stats.damageDealt += 40;
+                // Knockback
+                const dx = enemy.x - this.player.x;
+                const dy = enemy.y - this.player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                enemy.x += (dx / dist) * 60;
+                enemy.y += (dy / dist) * 60;
+                if (enemy.hp <= 0 && !enemy.dying) {
+                    enemy.die();
+                    CollisionSystem.spawnXP(enemy, this.xpOrbs);
+                    if (this.stats) { this.stats.kills++; this.stats.streak++; this.stats.bestStreak = Math.max(this.stats.bestStreak, this.stats.streak); }
+                }
+                this.particles.emit(enemy.x, enemy.y, 8, { color: '#ff8844', speed: 3, life: 300, size: 3 });
+            }
+            // Smoke trail
+            this.particles.emit(this.player.x, this.player.y, 1, {
+                color: '#888', speed: 0.5, life: 600, size: 6, gravity: -0.02, shrink: true
+            });
+        }
+
+        // Shake timer
+        if (this.shakeTimer > 0) this.shakeTimer -= dt;
+
+        // Particles
+        this.particles.update(dt);
 
         // Remove fully faded enemies
         this.enemies = this.enemies.filter(e => !e.removed);
@@ -245,6 +369,12 @@ class Game {
         ctx.save();
         this.camera.apply(ctx);
 
+        // Screen shake
+        if (this.shakeTimer > 0) {
+            const intensity = this.shakeIntensity * (this.shakeTimer / 1500);
+            ctx.translate((Math.random() - 0.5) * intensity * 2, (Math.random() - 0.5) * intensity * 2);
+        }
+
         this.renderer.drawMap(ctx);
 
         // XP orbs
@@ -274,6 +404,9 @@ class Game {
 
         // Player
         if (this.player) this.player.draw(ctx);
+
+        // Particles
+        this.particles.draw(ctx);
 
         ctx.restore();
     }

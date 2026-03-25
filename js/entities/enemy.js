@@ -26,12 +26,20 @@ class Enemy {
         this.maxShield = data.shieldHp || 0;
         this.spawnTimer = 0;
         this.spawnRequested = false;
+
+        // Stun
+        this.stunTimer = 0;
     }
 
     update(player, dt, enemies) {
         if (this.dying) {
             this.deathTimer -= dt;
             if (this.deathTimer <= 0) this.removed = true;
+            return null;
+        }
+
+        if (this.stunTimer > 0) {
+            this.stunTimer -= dt;
             return null;
         }
 
@@ -280,6 +288,22 @@ class Enemy {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size + 8, 0, Math.PI * 2);
             ctx.stroke();
+        }
+
+        // Stun indicator
+        if (this.stunTimer > 0 && !this.dying) {
+            ctx.fillStyle = '#ffff00';
+            const t = Date.now() * 0.01;
+            for (let i = 0; i < 3; i++) {
+                const sa = t + i * 2.094;
+                ctx.beginPath();
+                ctx.arc(
+                    this.x + Math.cos(sa) * (this.size + 4),
+                    this.y - this.size - 6 + Math.sin(sa) * 3,
+                    2, 0, Math.PI * 2
+                );
+                ctx.fill();
+            }
         }
 
         // HP bar
