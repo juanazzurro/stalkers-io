@@ -17,9 +17,23 @@ class Game {
         this.xpOrbs = [];
 
         this.waveManager = new WaveManager(this.mapWidth, this.mapHeight);
+        this.levelUpUI = new LevelUpUI(canvas);
     }
 
     update(dt) {
+        // Level up selection
+        if (this.state === 'levelup') {
+            const selected = this.levelUpUI.getSelected();
+            if (selected) {
+                this.player.upgrades.applyUpgrade(selected);
+                this.player.recalcStats();
+                this.player.hp = Math.min(this.player.maxHp, this.player.hp + 20);
+                this.levelUpUI.hide();
+                this.state = 'playing';
+            }
+            return;
+        }
+
         if (this.state !== 'playing') return;
 
         // Wave system
@@ -44,7 +58,6 @@ class Game {
             const proj = enemy.update(this.player, dt, this.enemies);
             if (proj) this.enemyProjectiles.push(proj);
 
-            // Boss spawn
             if (enemy.spawnRequested) {
                 enemy.spawnRequested = false;
                 for (let i = 0; i < 2; i++) {
@@ -79,11 +92,21 @@ class Game {
                 orb.y += (dy / dist) * 5;
             }
             if (dist < 20) {
-                this.player.xp += orb.value;
+                this.player.addXP(orb.value);
                 orb.collected = true;
             }
         }
         this.xpOrbs = this.xpOrbs.filter(o => !o.collected);
+
+        // Check level up (defer during wave announcement)
+        if (this.player.levelUpPending && this.waveManager.state !== 'announce') {
+            this.player.levelUpPending = false;
+            const options = this.player.upgrades.getUpgradeOptions();
+            if (options.length > 0) {
+                this.levelUpUI.show(options, this.player.upgrades);
+                this.state = 'levelup';
+            }
+        }
 
         this.camera.update(this.player);
         this.input.updateMouse(this.camera);
@@ -99,11 +122,14 @@ class Game {
 
         // XP orbs
         for (const orb of this.xpOrbs) {
-            ctx.fillStyle = '#39ff14';
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 6;
+            ctx.fillStyle = '#ffd700';
             ctx.beginPath();
             ctx.arc(orb.x, orb.y, 5, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = '#7fff7f';
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ffee88';
             ctx.beginPath();
             ctx.arc(orb.x, orb.y, 2, 0, Math.PI * 2);
             ctx.fill();
@@ -121,12 +147,63 @@ class Game {
 
         ctx.restore();
 
-        // HUD (screen space)
+        // HUD
         this.renderHUD(ctx);
+
+        // Wave announcement
+        this.renderWaveAnnouncement(ctx);
+
+        // Level up UI
+        if (this.state === 'levelup') {
+            this.levelUpUI.draw(ctx);
+        }
     }
 
     renderHUD(ctx) {
-        // Wave number — top right
+        // HP bar — top left
+        const bx = 20;
+        const by = 20;
+        const bw = 200;
+        const bh = 16;
+
+        ctx.fillStyle = '#333';
+        ctx.fillRect(bx, by, bw, bh);
+        ctx.fillStyle = '#cc0000';
+        ctx.fillRect(bx, by, Math.max(0, (this.player.hp / this.player.maxHp)) * bw, bh);
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bx, by, bw, bh);
+
+        ctx.font = '10px monospace';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.fillText(Math.ceil(this.player.hp) + ' / ' + Math.round(this.player.maxHp), bx + bw / 2, by + 12);
+
+        // XP bar
+        const xpY = by + bh + 4;
+        const xpH = 10;
+        const xpReq = this.player.xpToLevel();
+        const xpProg = this.player.level >= 30 ? 1 : this.player.xp / xpReq;
+
+        ctx.fillStyle = '#333';
+        ctx.fillRect(bx, xpY, bw, xpH);
+        if (bw * xpProg > 0) {
+            const grad = ctx.createLinearGradient(bx, 0, bx + xpProg * bw, 0);
+            grad.addColorStop(0, '#4488ff');
+            grad.addColorStop(1, '#ffd700');
+            ctx.fillStyle = grad;
+            ctx.fillRect(bx, xpY, xpProg * bw, xpH);
+        }
+        ctx.strokeStyle = '#888';
+        ctx.strokeRect(bx, xpY, bw, xpH);
+
+        // Level
+        ctx.font = 'bold 14px monospace';
+        ctx.fillStyle = '#ffd700';
+        ctx.textAlign = 'left';
+        ctx.fillText('LVL ' + this.player.level, bx + bw + 10, by + 13);
+
+        // Wave — top right
         ctx.save();
         ctx.font = 'bold 20px monospace';
         ctx.fillStyle = '#fff';
@@ -137,7 +214,29 @@ class Game {
         ctx.shadowBlur = 0;
         ctx.restore();
 
-        // Wave announcement
+        // Upgraded stats — bottom left
+        const upgraded = Object.entries(this.player.upgrades.stats)
+            .filter(([_, s]) => s.level > 0);
+
+        if (upgraded.length > 0) {
+            let ix = 20;
+            const iy = this.canvas.height - 40;
+            for (const [, stat] of upgraded) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(ix - 2, iy - 18, 28, 32);
+                ctx.font = '18px monospace';
+                ctx.fillStyle = stat.color;
+                ctx.textAlign = 'center';
+                ctx.fillText(stat.icon, ix + 12, iy);
+                ctx.font = 'bold 11px monospace';
+                ctx.fillStyle = '#fff';
+                ctx.fillText(stat.level.toString(), ix + 12, iy + 14);
+                ix += 32;
+            }
+        }
+    }
+
+    renderWaveAnnouncement(ctx) {
         const ann = this.waveManager.getAnnouncement();
         if (!ann) return;
 

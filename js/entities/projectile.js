@@ -15,6 +15,8 @@ class Projectile {
         this.trail = [];
         this.speed = Math.sqrt(vx * vx + vy * vy);
         this.aoeRadius = aoeRadius || 0;
+        this.pierceLeft = 0;
+        this.hitTargets = new Set();
     }
 
     update(mapWidth, mapHeight) {

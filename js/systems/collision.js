@@ -26,10 +26,11 @@ class CollisionSystem {
 
             for (const enemy of enemies) {
                 if (enemy.dying) continue;
+                if (proj.hitTargets.has(enemy)) continue;
                 if (!this.circleHit(proj.x, proj.y, pr, enemy.x, enemy.y, enemy.size)) continue;
 
                 enemy.takeDamage(proj.damage);
-                proj.dead = true;
+                proj.hitTargets.add(enemy);
 
                 // AOE
                 if (proj.aoeRadius > 0) {
@@ -49,7 +50,14 @@ class CollisionSystem {
                     enemy.die();
                     this.spawnXP(enemy, xpOrbs);
                 }
-                break;
+
+                // Penetration
+                if (proj.pierceLeft > 0) {
+                    proj.pierceLeft--;
+                } else {
+                    proj.dead = true;
+                    break;
+                }
             }
         }
 
@@ -84,8 +92,9 @@ class CollisionSystem {
     }
 
     static spawnXP(enemy, xpOrbs) {
+        const totalXP = enemy.data.xpValue || 10;
         const count = 3;
-        const value = Math.ceil(enemy.maxHp / count);
+        const value = Math.ceil(totalXP / count);
         for (let i = 0; i < count; i++) {
             xpOrbs.push({
                 x: enemy.x + (Math.random() - 0.5) * 30,

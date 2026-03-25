@@ -45,6 +45,7 @@ class WaveManager {
         this.isBossWave = this.wave % 5 === 0;
         this.state = 'announce';
         this.timer = 0;
+        this.announceDuration = this.isBossWave ? 3000 : 2000;
         this.announceText = 'WAVE ' + this.wave;
     }
 

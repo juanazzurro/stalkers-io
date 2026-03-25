@@ -12,10 +12,41 @@ class Player {
         this.angle = 0;
         this.fireCooldown = 0;
         this.size = charData.hitboxRadius;
+        this.upgrades = new UpgradeSystem();
+        this.levelUpPending = false;
+        this.recalcStats();
+    }
+
+    recalcStats() {
+        const u = this.upgrades;
+        this.maxHp = this.data.hp + u.getMultiplier('maxHP');
+        this.effectiveSpeed = this.data.speed * u.getMultiplier('moveSpeed');
+        this.effectiveDamage = this.data.damage * u.getMultiplier('damage');
+        this.effectiveFireRate = this.data.fireRate * u.getMultiplier('fireRate');
+        this.effectiveRange = this.data.range * u.getMultiplier('range');
+        this.effectiveProjSpeed = 8 * u.getMultiplier('projectileSpeed');
+        this.penetration = Math.floor(u.getMultiplier('penetration'));
+        this.regen = u.getMultiplier('regen');
+    }
+
+    xpToLevel() {
+        return Math.floor(100 * Math.pow(this.level, 1.3));
+    }
+
+    addXP(amount) {
+        if (this.level >= 30) return;
+        if (this.data.passiveXPBonus) amount *= (1 + this.data.passiveXPBonus);
+        this.xp += amount;
+        const required = this.xpToLevel();
+        if (this.xp >= required) {
+            this.xp -= required;
+            this.level++;
+            this.levelUpPending = true;
+        }
     }
 
     update(dir, mouseWorld, dt) {
-        let speed = this.data.speed;
+        let speed = this.effectiveSpeed;
         if (this.data.passiveSpeedBoost && this.hp / this.maxHp < 0.3) {
             speed *= (1 + this.data.passiveSpeedBoost);
         }
@@ -29,29 +60,35 @@ class Player {
         this.angle = Math.atan2(mouseWorld.y - this.y, mouseWorld.x - this.x);
 
         if (this.fireCooldown > 0) this.fireCooldown -= dt;
+
+        // Regen
+        if (this.regen > 0 && this.hp < this.maxHp) {
+            this.hp = Math.min(this.maxHp, this.hp + this.regen * dt / 1000);
+        }
     }
 
     tryShoot(targetX, targetY) {
         if (this.fireCooldown > 0) return null;
 
-        this.fireCooldown = 1000 / this.data.fireRate;
+        this.fireCooldown = 1000 / this.effectiveFireRate;
 
         const angle = Math.atan2(targetY - this.y, targetX - this.x);
-        const projSpeed = 8;
-        const range = this.data.range * 60;
+        const range = this.effectiveRange * 60;
 
-        return new Projectile(
+        const proj = new Projectile(
             this.x + Math.cos(angle) * (this.size + 5),
             this.y + Math.sin(angle) * (this.size + 5),
-            Math.cos(angle) * projSpeed,
-            Math.sin(angle) * projSpeed,
-            this.data.damage,
+            Math.cos(angle) * this.effectiveProjSpeed,
+            Math.sin(angle) * this.effectiveProjSpeed,
+            this.effectiveDamage,
             range,
             this.data.projectileType,
             this.data.projectileColor,
             this,
             this.data.aoeRadius || 0
         );
+        proj.pierceLeft = this.penetration;
+        return proj;
     }
 
     draw(ctx) {
