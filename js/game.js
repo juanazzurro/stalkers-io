@@ -16,19 +16,15 @@ class Game {
         this.enemies = [];
         this.xpOrbs = [];
 
-        // Spawn 5 recruits for testing
-        for (let i = 0; i < 5; i++) {
-            let x, y;
-            do {
-                x = 200 + Math.random() * (this.mapWidth - 400);
-                y = 200 + Math.random() * (this.mapHeight - 400);
-            } while (Math.hypot(x - this.player.x, y - this.player.y) < 400);
-            this.enemies.push(new Enemy(ENEMIES.RECRUIT, x, y, this.mapWidth, this.mapHeight));
-        }
+        this.waveManager = new WaveManager(this.mapWidth, this.mapHeight);
     }
 
     update(dt) {
         if (this.state !== 'playing') return;
+
+        // Wave system
+        const spawned = this.waveManager.update(dt, this.enemies, this.player);
+        if (spawned) this.enemies.push(...spawned);
 
         const dir = this.input.getDirection();
         this.player.update(dir, this.input.mouseWorld, dt);
@@ -123,6 +119,55 @@ class Game {
         // Player
         this.player.draw(ctx);
 
+        ctx.restore();
+
+        // HUD (screen space)
+        this.renderHUD(ctx);
+    }
+
+    renderHUD(ctx) {
+        // Wave number — top right
+        ctx.save();
+        ctx.font = 'bold 20px monospace';
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.textAlign = 'right';
+        ctx.fillText('WAVE ' + this.waveManager.wave, this.canvas.width - 20, 30);
+        ctx.shadowBlur = 0;
+        ctx.restore();
+
+        // Wave announcement
+        const ann = this.waveManager.getAnnouncement();
+        if (!ann) return;
+
+        ctx.save();
+        ctx.globalAlpha = ann.alpha;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const cx = this.canvas.width / 2 + ann.shakeX;
+        const cy = this.canvas.height * 0.3 + ann.shakeY;
+
+        if (ann.isBoss) {
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 20;
+            ctx.font = 'bold 52px monospace';
+            ctx.fillStyle = '#ff3333';
+            ctx.fillText(ann.text, cx, cy - 30);
+            ctx.font = 'bold 26px monospace';
+            ctx.fillStyle = '#ff0000';
+            ctx.fillText('\u26A0 \u041A\u041E\u041C\u0410\u041D\u0414\u0418\u0420 APPROACHING \u26A0', cx, cy + 30);
+        } else {
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 10;
+            ctx.font = 'bold 52px monospace';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(ann.text, cx, cy);
+        }
+
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
         ctx.restore();
     }
 }
