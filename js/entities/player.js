@@ -34,6 +34,15 @@ class Player {
         else if (type === 'poop') { this.abilityMaxCooldown = 12000; }
         else { this.abilityMaxCooldown = 15000; }
 
+        // Pickup buffs
+        this.xpMultiplier = 1;
+        this.xpMultiplierTimer = 0;
+        this.doubleShot = false;
+        this.doubleShotTimer = 0;
+        this.pickupInvulnTimer = 0;
+        this.flashTimer = 0;
+        this.flashColor = '#88ff88';
+
         this.recalcStats();
     }
 
@@ -56,6 +65,7 @@ class Player {
     addXP(amount) {
         if (this.level >= 30) return;
         if (this.data.passiveXPBonus) amount *= (1 + this.data.passiveXPBonus);
+        amount *= this.xpMultiplier;
         this.xp += amount;
         const required = this.xpToLevel();
         if (this.xp >= required) {
@@ -111,7 +121,7 @@ class Player {
             this.chargeTimer -= dt;
             if (this.chargeTimer <= 0) {
                 this.charging = false;
-                this.invulnerable = false;
+                if (this.pickupInvulnTimer <= 0) this.invulnerable = false;
             }
             this.angle = Math.atan2(this.chargeVy, this.chargeVx);
             if (this.fireCooldown > 0) this.fireCooldown -= dt;
@@ -132,6 +142,24 @@ class Player {
         this.angle = Math.atan2(mouseWorld.y - this.y, mouseWorld.x - this.x);
 
         if (this.fireCooldown > 0) this.fireCooldown -= dt;
+
+        // Buff timers
+        if (this.xpMultiplierTimer > 0) {
+            this.xpMultiplierTimer -= dt;
+            if (this.xpMultiplierTimer <= 0) { this.xpMultiplier = 1; this.xpMultiplierTimer = 0; }
+        }
+        if (this.doubleShotTimer > 0) {
+            this.doubleShotTimer -= dt;
+            if (this.doubleShotTimer <= 0) { this.doubleShot = false; this.doubleShotTimer = 0; }
+        }
+        if (this.pickupInvulnTimer > 0) {
+            this.pickupInvulnTimer -= dt;
+            if (this.pickupInvulnTimer <= 0) {
+                this.pickupInvulnTimer = 0;
+                if (!this.charging) this.invulnerable = false;
+            }
+        }
+        if (this.flashTimer > 0) this.flashTimer -= dt;
 
         // Regen
         if (this.regen > 0 && this.hp < this.maxHp) {
@@ -160,20 +188,27 @@ class Player {
         const angle = Math.atan2(targetY - this.y, targetX - this.x);
         const range = this.effectiveRange * 60;
 
-        const proj = new Projectile(
-            this.x + Math.cos(angle) * (this.size + 5),
-            this.y + Math.sin(angle) * (this.size + 5),
-            Math.cos(angle) * this.effectiveProjSpeed,
-            Math.sin(angle) * this.effectiveProjSpeed,
-            this.effectiveDamage,
-            range,
-            this.data.projectileType,
-            this.data.projectileColor,
-            this,
-            this.data.aoeRadius || 0
-        );
-        proj.pierceLeft = this.penetration;
-        return proj;
+        const results = [];
+        const offsets = this.doubleShot ? [-0.08, 0.08] : [0];
+
+        for (const off of offsets) {
+            const a = angle + off;
+            const proj = new Projectile(
+                this.x + Math.cos(a) * (this.size + 5),
+                this.y + Math.sin(a) * (this.size + 5),
+                Math.cos(a) * this.effectiveProjSpeed,
+                Math.sin(a) * this.effectiveProjSpeed,
+                this.effectiveDamage,
+                range,
+                this.data.projectileType,
+                this.data.projectileColor,
+                this,
+                this.data.aoeRadius || 0
+            );
+            proj.pierceLeft = this.penetration;
+            results.push(proj);
+        }
+        return results;
     }
 
     draw(ctx) {
@@ -182,6 +217,36 @@ class Player {
 
         // Ability zone visuals (behind character)
         this.drawAbilityZones(ctx);
+
+        // XP multiplier aura
+        if (this.xpMultiplierTimer > 0) {
+            const pulse = 0.2 + Math.sin(this.time * 0.006) * 0.1;
+            ctx.strokeStyle = 'rgba(255, 215, 0, ' + pulse + ')';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size + 10, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Ushanka shield
+        if (this.pickupInvulnTimer > 0) {
+            const pulse = 0.3 + Math.sin(this.time * 0.008) * 0.15;
+            ctx.strokeStyle = 'rgba(255, 215, 0, ' + pulse + ')';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size + 8, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Flash effect (green heal, etc.)
+        if (this.flashTimer > 0) {
+            ctx.globalAlpha = 0.3 * (this.flashTimer / 500);
+            ctx.fillStyle = this.flashColor;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size + 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
 
         const type = this.data.projectileType;
         if (type === 'vomit') this.drawMutant(ctx);

@@ -100,6 +100,142 @@ class CollisionSystem {
         }
     }
 
+    // Circle vs AABB overlap test
+    static circleRect(cx, cy, cr, rx, ry, rw, rh) {
+        const closestX = Math.max(rx, Math.min(cx, rx + rw));
+        const closestY = Math.max(ry, Math.min(cy, ry + rh));
+        const dx = cx - closestX;
+        const dy = cy - closestY;
+        return (dx * dx + dy * dy) < (cr * cr);
+    }
+
+    // Push circle out of rect, returns true if collision occurred
+    static pushCircleOutOfRect(entity, rx, ry, rw, rh) {
+        const closestX = Math.max(rx, Math.min(entity.x, rx + rw));
+        const closestY = Math.max(ry, Math.min(entity.y, ry + rh));
+        const dx = entity.x - closestX;
+        const dy = entity.y - closestY;
+        const distSq = dx * dx + dy * dy;
+        const r = entity.size;
+        if (distSq < r * r && distSq > 0) {
+            const dist = Math.sqrt(distSq);
+            const overlap = r - dist;
+            entity.x += (dx / dist) * overlap;
+            entity.y += (dy / dist) * overlap;
+            return true;
+        }
+        if (distSq === 0) {
+            // Entity center is inside rect — push to nearest edge
+            const toLeft = entity.x - rx;
+            const toRight = (rx + rw) - entity.x;
+            const toTop = entity.y - ry;
+            const toBottom = (ry + rh) - entity.y;
+            const minDist = Math.min(toLeft, toRight, toTop, toBottom);
+            if (minDist === toLeft) entity.x = rx - r;
+            else if (minDist === toRight) entity.x = rx + rw + r;
+            else if (minDist === toTop) entity.y = ry - r;
+            else entity.y = ry + rh + r;
+            return true;
+        }
+        return false;
+    }
+
+    static pushCircleOutOfCircle(entity, ox, oy, or) {
+        const dx = entity.x - ox;
+        const dy = entity.y - oy;
+        const distSq = dx * dx + dy * dy;
+        const minDist = entity.size + or;
+        if (distSq < minDist * minDist && distSq > 0) {
+            const dist = Math.sqrt(distSq);
+            const overlap = minDist - dist;
+            entity.x += (dx / dist) * overlap;
+            entity.y += (dy / dist) * overlap;
+            return true;
+        }
+        return false;
+    }
+
+    static checkObstacles(player, enemies, playerProj, enemyProj, obstacles, particles) {
+        for (const obs of obstacles) {
+            if (obs.destroyed) continue;
+
+            const isCircle = obs.type === 'barrel';
+
+            // Player vs obstacle
+            if (isCircle) {
+                this.pushCircleOutOfCircle(player, obs.x, obs.y, obs.radius);
+            } else {
+                this.pushCircleOutOfRect(player, obs.x, obs.y, obs.w, obs.h);
+            }
+
+            // Enemies vs obstacle
+            for (const enemy of enemies) {
+                if (enemy.dying) continue;
+                if (isCircle) {
+                    this.pushCircleOutOfCircle(enemy, obs.x, obs.y, obs.radius);
+                } else {
+                    this.pushCircleOutOfRect(enemy, obs.x, obs.y, obs.w, obs.h);
+                }
+            }
+
+            // Player projectiles vs obstacle
+            for (const proj of playerProj) {
+                if (proj.dead) continue;
+                const pr = this.projRadius(proj.type);
+                let hit = false;
+                if (isCircle) {
+                    hit = this.circleHit(proj.x, proj.y, pr, obs.x, obs.y, obs.radius);
+                } else {
+                    hit = this.circleRect(proj.x, proj.y, pr, obs.x, obs.y, obs.w, obs.h);
+                }
+                if (hit) {
+                    proj.dead = true;
+                    if (obs.destructible) {
+                        obs.hp -= proj.damage;
+                        if (obs.hp <= 0) {
+                            obs.destroyed = true;
+                            if (particles) {
+                                const px = isCircle ? obs.x : obs.x + obs.w / 2;
+                                const py = isCircle ? obs.y : obs.y + obs.h / 2;
+                                particles.emit(px, py, 12, {
+                                    color: obs.color, speed: 3, life: 500, size: 4, gravity: 0.1
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Enemy projectiles vs obstacle
+            for (const proj of enemyProj) {
+                if (proj.dead) continue;
+                const pr = this.projRadius(proj.type);
+                let hit = false;
+                if (isCircle) {
+                    hit = this.circleHit(proj.x, proj.y, pr, obs.x, obs.y, obs.radius);
+                } else {
+                    hit = this.circleRect(proj.x, proj.y, pr, obs.x, obs.y, obs.w, obs.h);
+                }
+                if (hit) {
+                    proj.dead = true;
+                    if (obs.destructible) {
+                        obs.hp -= proj.damage;
+                        if (obs.hp <= 0) {
+                            obs.destroyed = true;
+                            if (particles) {
+                                const px = isCircle ? obs.x : obs.x + obs.w / 2;
+                                const py = isCircle ? obs.y : obs.y + obs.h / 2;
+                                particles.emit(px, py, 12, {
+                                    color: obs.color, speed: 3, life: 500, size: 4, gravity: 0.1
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     static spawnXP(enemy, xpOrbs) {
         const totalXP = enemy.data.xpValue || 10;
         const color = enemy.data.xpColor || '#ffd700';

@@ -1,15 +1,34 @@
 class HUD {
     constructor(canvas) {
         this.canvas = canvas;
+        // Snow/ash particles
+        this.snowParticles = [];
+        for (let i = 0; i < 40; i++) {
+            this.snowParticles.push(this.makeSnow());
+        }
     }
 
-    draw(ctx, player, waveManager, enemies, stats, xpOrbs) {
+    makeSnow() {
+        return {
+            x: Math.random() * (this.canvas.width || 1920),
+            y: Math.random() * (this.canvas.height || 1080),
+            speed: 0.3 + Math.random() * 0.5,
+            size: 1 + Math.random() * 2,
+            alpha: 0.15 + Math.random() * 0.3,
+            drift: (Math.random() - 0.5) * 0.5
+        };
+    }
+
+    draw(ctx, player, waveManager, enemies, stats, xpOrbs, killPopTimer) {
         this.drawBars(ctx, player);
         this.drawWaveInfo(ctx, waveManager, enemies);
+        this.drawKillCounter(ctx, stats, killPopTimer);
         this.drawUpgradeIcons(ctx, player);
         this.drawCooldown(ctx, player);
         this.drawMinimap(ctx, player, enemies, xpOrbs);
         this.drawPortrait(ctx, player);
+        this.drawLowHPVignette(ctx, player);
+        this.drawSnow(ctx);
     }
 
     drawBars(ctx, player) {
@@ -297,5 +316,73 @@ class HUD {
         ctx.beginPath();
         ctx.arc(11, 0, 2, 0, Math.PI * 2);
         ctx.fill();
+    }
+
+    drawKillCounter(ctx, stats, killPopTimer) {
+        if (!stats) return;
+        const w = this.canvas.width;
+
+        ctx.save();
+        ctx.textAlign = 'right';
+
+        // Pop scale effect
+        let scale = 1;
+        if (killPopTimer > 0) {
+            const t = killPopTimer / 300;
+            scale = 1 + t * 0.3;
+        }
+
+        const x = w - 20;
+        const y = 72;
+
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        ctx.translate(-x, -y);
+
+        // Skull icon + count
+        ctx.font = 'bold 16px monospace';
+        ctx.fillStyle = '#ff6644';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.fillText('\u2620 ' + stats.kills, x, y);
+        ctx.shadowBlur = 0;
+        ctx.restore();
+    }
+
+    drawLowHPVignette(ctx, player) {
+        const hpRatio = player.hp / player.maxHp;
+        if (hpRatio >= 0.3) return;
+
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+        const intensity = (1 - hpRatio / 0.3);
+        const pulse = 0.5 + Math.sin(Date.now() * 0.005) * 0.2;
+        const alpha = intensity * 0.4 * pulse;
+
+        const grad = ctx.createRadialGradient(w / 2, h / 2, w * 0.3, w / 2, h / 2, w * 0.7);
+        grad.addColorStop(0, 'rgba(180, 0, 0, 0)');
+        grad.addColorStop(1, 'rgba(180, 0, 0, ' + alpha + ')');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+    }
+
+    drawSnow(ctx) {
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+
+        for (const p of this.snowParticles) {
+            p.y += p.speed;
+            p.x += p.drift + Math.sin(p.y * 0.01) * 0.2;
+            if (p.y > h) { p.y = -5; p.x = Math.random() * w; }
+            if (p.x < 0) p.x = w;
+            if (p.x > w) p.x = 0;
+
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = '#ccd';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
     }
 }

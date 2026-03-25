@@ -118,11 +118,24 @@ class MainMenu {
         ctx.shadowBlur = 0;
         ctx.restore();
 
+        // Best score
+        let scores = [];
+        try {
+            const stored = localStorage.getItem('stalkers_scores');
+            if (stored) scores = JSON.parse(stored);
+        } catch (e) {}
+        if (scores.length > 0) {
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 16px monospace';
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText('BEST: ' + scores[0].score, cx, btnY + btnH / 2 + 30);
+        }
+
         // Version
         ctx.font = '11px monospace';
         ctx.fillStyle = '#444';
         ctx.textAlign = 'right';
-        ctx.fillText('v0.4', w - 15, h - 15);
+        ctx.fillText('v0.5', w - 15, h - 15);
 
         // Controls hint
         ctx.textAlign = 'center';
@@ -408,8 +421,9 @@ class GameOverUI {
         this.fadeIn = 0;
     }
 
-    show(stats) {
+    show(stats, finalScore) {
         this.stats = stats;
+        this.finalScore = finalScore || 0;
         this.fadeIn = 0;
     }
 
@@ -423,7 +437,7 @@ class GameOverUI {
 
         const btnW = 180;
         const btnH = 44;
-        const retryY = h * 0.72;
+        const retryY = h * 0.82;
 
         this.hoverRetry = mouseX > cx - btnW / 2 && mouseX < cx + btnW / 2 &&
                           mouseY > retryY - btnH / 2 && mouseY < retryY + btnH / 2;
@@ -466,7 +480,7 @@ class GameOverUI {
         const lines = [
             'Wave reached:  ' + stats.wave,
             'Enemies killed:  ' + stats.kills,
-            'Damage dealt:  ' + stats.damageDealt,
+            'Damage dealt:  ' + Math.floor(stats.damageDealt),
             'Best streak:  ' + stats.bestStreak,
             'Time survived:  ' + this.formatTime(stats.timeElapsed),
             'Level:  ' + stats.level
@@ -479,11 +493,39 @@ class GameOverUI {
             ly += 28;
         }
 
+        // Score
+        ctx.font = 'bold 22px monospace';
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText('SCORE: ' + this.finalScore, cx, ly + 10);
+        ly += 40;
+
+        // Top scores
+        let scores = [];
+        try {
+            const stored = localStorage.getItem('stalkers_scores');
+            if (stored) scores = JSON.parse(stored);
+        } catch (e) {}
+
+        if (scores.length > 0) {
+            ctx.font = 'bold 14px monospace';
+            ctx.fillStyle = '#888';
+            ctx.fillText('TOP SCORES', cx, ly);
+            ly += 20;
+            ctx.font = '13px monospace';
+            for (let i = 0; i < Math.min(5, scores.length); i++) {
+                const s = scores[i];
+                const isCurrentScore = (s.score === this.finalScore && i === scores.findIndex(sc => sc.score === this.finalScore));
+                ctx.fillStyle = isCurrentScore ? '#ffd700' : '#777';
+                ctx.fillText((i + 1) + '. ' + s.score + '  (W' + s.wave + ' K' + s.kills + ' L' + s.level + ')', cx, ly);
+                ly += 18;
+            }
+        }
+
         // Buttons
         const btnW = 180;
         const btnH = 44;
 
-        this.drawButton(ctx, cx, h * 0.72, btnW, btnH, '\u21BB  RETRY', this.hoverRetry, '#cc3300');
+        this.drawButton(ctx, cx, h * 0.82, btnW, btnH, '\u21BB  RETRY', this.hoverRetry, '#cc3300');
 
         ctx.globalAlpha = 1;
     }
@@ -530,7 +572,7 @@ class PauseUI {
         const w = this.canvas.width;
         const h = this.canvas.height;
         const cx = w / 2;
-        const btnW = 180;
+        const btnW = 220;
         const btnH = 44;
         const resumeY = h * 0.55;
         const quitY = h * 0.55 + 60;
@@ -563,15 +605,15 @@ class PauseUI {
         ctx.shadowBlur = 10;
         ctx.font = 'bold 48px monospace';
         ctx.fillStyle = '#fff';
-        ctx.fillText('PAUSED', cx, h * 0.35);
+        ctx.fillText('\u041F\u0410\u0423\u0417\u0410', cx, h * 0.35);
         ctx.shadowBlur = 0;
         ctx.restore();
 
         // Buttons
-        const btnW = 180;
+        const btnW = 220;
         const btnH = 44;
-        this.drawButton(ctx, cx, h * 0.55, btnW, btnH, '\u25B6  RESUME', this.hoverResume, '#4488ff');
-        this.drawButton(ctx, cx, h * 0.55 + 60, btnW, btnH, 'QUIT', this.hoverQuit, '#cc3300');
+        this.drawButton(ctx, cx, h * 0.55, btnW, btnH, '\u041F\u0420\u041E\u0414\u041E\u041B\u0416\u0418\u0422\u042C', this.hoverResume, '#4488ff');
+        this.drawButton(ctx, cx, h * 0.55 + 60, btnW, btnH, '\u0412\u042B\u0425\u041E\u0414', this.hoverQuit, '#cc3300');
 
         // Hint
         ctx.textAlign = 'center';

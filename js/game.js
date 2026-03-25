@@ -29,6 +29,14 @@ class Game {
         this.particles = new ParticleSystem();
         this.shakeTimer = 0;
         this.shakeIntensity = 0;
+        this.shakeDuration = 0;
+
+        this.obstacles = [];
+        this.pickups = [];
+        this.pickupSpawnTimer = 0;
+        this.bloodStains = [];
+        this.lastKillCount = 0;
+        this.killPopTimer = 0;
 
         this.wasClicked = false;
     }
@@ -43,8 +51,65 @@ class Game {
         this.stats = { kills: 0, damageDealt: 0, streak: 0, bestStreak: 0, timeElapsed: 0, wave: 1, level: 1 };
         this.particles.clear();
         this.shakeTimer = 0;
+        this.obstacles = MAP_OBSTACLES.map(o => ({ ...o }));
+        this.pickups = [];
+        this.pickupSpawnTimer = 15000; // First pickup at 15s
+        this.bloodStains = [];
+        this.lastKillCount = 0;
+        this.killPopTimer = 0;
         this.state = 'playing';
         this.input.clearInputs();
+    }
+
+    triggerShake(intensity, duration) {
+        this.shakeIntensity = intensity;
+        this.shakeDuration = duration;
+        this.shakeTimer = duration;
+    }
+
+    saveScore() {
+        const score = this.stats.wave * this.stats.kills * this.stats.level;
+        let scores = [];
+        try {
+            const stored = localStorage.getItem('stalkers_scores');
+            if (stored) scores = JSON.parse(stored);
+        } catch (e) { scores = []; }
+
+        scores.push({
+            score: score,
+            wave: this.stats.wave,
+            kills: this.stats.kills,
+            level: this.stats.level,
+            character: this.lastCharKey || '?',
+            date: new Date().toISOString().split('T')[0]
+        });
+
+        scores.sort((a, b) => b.score - a.score);
+        scores = scores.slice(0, 5);
+        localStorage.setItem('stalkers_scores', JSON.stringify(scores));
+        return score;
+    }
+
+    applyPickup(type) {
+        switch (type) {
+            case 'VODKA':
+                this.player.hp = Math.min(this.player.maxHp, this.player.hp + this.player.maxHp * 0.2);
+                this.player.flashTimer = 500;
+                this.player.flashColor = '#88ff88';
+                break;
+            case 'RED_STAR':
+                this.player.xpMultiplier = 2;
+                this.player.xpMultiplierTimer = 10000;
+                break;
+            case 'USHANKA':
+                this.player.invulnerable = true;
+                this.player.pickupInvulnTimer = 3000;
+                break;
+            case 'AMMO_CRATE':
+                this.player.doubleShot = true;
+                this.player.doubleShotTimer = 8000;
+                break;
+        }
     }
 
     update(dt) {
@@ -163,15 +228,14 @@ class Game {
                 });
             }
             if (result === 'charge') {
-                this.shakeTimer = 1500;
-                this.shakeIntensity = 3;
+                this.triggerShake(3, 1500);
             }
         }
 
         // Player shooting
         if (this.input.shooting) {
-            const proj = this.player.tryShoot(this.input.mouseWorld.x, this.input.mouseWorld.y);
-            if (proj) this.projectiles.push(proj);
+            const result = this.player.tryShoot(this.input.mouseWorld.x, this.input.mouseWorld.y);
+            if (result) this.projectiles.push(...result);
         }
 
         // Update player projectiles
@@ -203,6 +267,20 @@ class Game {
 
         // Collisions
         CollisionSystem.check(this.player, this.enemies, this.projectiles, this.enemyProjectiles, this.xpOrbs, this.stats);
+
+        // Kamikaze explosion shake
+        for (const enemy of this.enemies) {
+            if (enemy.data.behavior === 'rush' && enemy.dying && enemy.deathTimer > 480) {
+                this.triggerShake(3, 200);
+                this.particles.emit(enemy.x, enemy.y, 15, {
+                    color: '#ff6600', speed: 5, life: 400, size: 5, gravity: 0.1
+                });
+            }
+        }
+
+        // Obstacle collisions
+        CollisionSystem.checkObstacles(this.player, this.enemies, this.projectiles, this.enemyProjectiles, this.obstacles, this.particles);
+        this.obstacles = this.obstacles.filter(o => !o.destroyed);
 
         // Mutant passive radiation
         if (this.player.data.passiveRadius) {
@@ -286,6 +364,62 @@ class Game {
             });
         }
 
+        // Pickup spawning
+        this.pickupSpawnTimer += dt;
+        if (this.pickupSpawnTimer >= 30000 && this.pickups.length < 5) {
+            this.pickupSpawnTimer = 0;
+            const px = 100 + Math.random() * (this.mapWidth - 200);
+            const py = 100 + Math.random() * (this.mapHeight - 200);
+            this.pickups.push(new Pickup(Pickup.randomType(), px, py));
+        }
+
+        // Pickup collection
+        for (const pickup of this.pickups) {
+            pickup.update(dt);
+            if (pickup.collected) continue;
+            const dx = this.player.x - pickup.x;
+            const dy = this.player.y - pickup.y;
+            if (dx * dx + dy * dy < (this.player.size + pickup.radius) * (this.player.size + pickup.radius)) {
+                pickup.collected = true;
+                this.applyPickup(pickup.type);
+            }
+        }
+        this.pickups = this.pickups.filter(p => !p.collected);
+
+        // Blood stains + kill tracking for shakes
+        const prevKills = this.lastKillCount;
+        this.lastKillCount = this.stats.kills;
+        if (this.stats.kills > prevKills) {
+            this.killPopTimer = 300;
+            // Spawn blood stains for newly dead enemies
+            for (const enemy of this.enemies) {
+                if (enemy.dying && enemy.deathTimer > 450) {
+                    this.bloodStains.push({
+                        x: enemy.x + (Math.random() - 0.5) * 10,
+                        y: enemy.y + (Math.random() - 0.5) * 10,
+                        radius: 8 + Math.random() * 7,
+                        alpha: 1,
+                        timer: 10000
+                    });
+                    // Boss death shake
+                    if (enemy.data.behavior === 'boss') {
+                        this.triggerShake(5, 300);
+                    }
+                }
+            }
+            if (this.bloodStains.length > 50) {
+                this.bloodStains = this.bloodStains.slice(-50);
+            }
+        }
+        if (this.killPopTimer > 0) this.killPopTimer -= dt;
+
+        // Update blood stains
+        for (const stain of this.bloodStains) {
+            stain.timer -= dt;
+            stain.alpha = Math.max(0, stain.timer / 10000);
+        }
+        this.bloodStains = this.bloodStains.filter(s => s.timer > 0);
+
         // Shake timer
         if (this.shakeTimer > 0) this.shakeTimer -= dt;
 
@@ -325,7 +459,8 @@ class Game {
         // Game over
         if (this.player.hp <= 0) {
             this.state = 'gameover';
-            this.gameOverUI.show(this.stats);
+            const finalScore = this.saveScore();
+            this.gameOverUI.show(this.stats, finalScore);
             return;
         }
 
@@ -349,7 +484,7 @@ class Game {
             case 'levelup':
             case 'paused':
                 this.renderWorld(ctx);
-                this.hud.draw(ctx, this.player, this.waveManager, this.enemies, this.stats, this.xpOrbs);
+                this.hud.draw(ctx, this.player, this.waveManager, this.enemies, this.stats, this.xpOrbs, this.killPopTimer);
                 this.renderWaveAnnouncement(ctx);
                 if (this.state === 'levelup') {
                     this.levelUpUI.draw(ctx);
@@ -371,11 +506,21 @@ class Game {
 
         // Screen shake
         if (this.shakeTimer > 0) {
-            const intensity = this.shakeIntensity * (this.shakeTimer / 1500);
+            const dur = this.shakeDuration || 1500;
+            const intensity = this.shakeIntensity * (this.shakeTimer / dur);
             ctx.translate((Math.random() - 0.5) * intensity * 2, (Math.random() - 0.5) * intensity * 2);
         }
 
         this.renderer.drawMap(ctx);
+
+        // Blood stains (on ground)
+        this.renderer.drawBloodStains(ctx, this.bloodStains);
+
+        // Obstacles
+        this.renderer.drawObstacles(ctx, this.obstacles);
+
+        // Pickups
+        for (const pickup of this.pickups) pickup.draw(ctx);
 
         // XP orbs
         for (const orb of this.xpOrbs) {
