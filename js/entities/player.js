@@ -2,32 +2,35 @@
 const _N = null;
 const SPRITE_MUTANT = [
 //   0       1       2       3       4       5       6       7       8       9      10      11
-    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     '#6aaa3a',_N,    _N,     _N,     _N],
-    [_N,     _N,     '#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#ff0000','#3a5a1a',_N,_N],
-    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#6aaa3a','#4a7a2a','#6aaa3a',_N],
-    [_N,     '#6aaa3a','#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#ff0000','#3a5a1a',_N,_N],
-    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#6aaa3a',_N],
-    [_N,     _N,     '#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N],
-    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N,     _N],
-    [_N,     '#6aaa3a','#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N,     _N,     _N],
-    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     '#3a5a1a','#4a7a2a','#4a7a2a','#3a5a1a',_N,     _N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     _N,     '#3a5a1a','#3a5a1a',_N,     _N,     _N,     _N,     _N,     _N],
+// Top-down humanoid: green head (right), dark coat body (center), boots (left), mutation bumps
+    [_N,     _N,     _N,     _N,     _N,     _N,     '#7a9a3a','#7a9a3a','#7a9a3a','#8aaa4a',_N,     _N],
+    [_N,     _N,     _N,     _N,     '#4a4a3a','#5a7a2a','#7a9a3a','#7a9a3a','#7a9a3a','#5a7a2a',_N,     _N],
+    [_N,     _N,     '#3a3a2a','#4a4a3a','#4a4a3a','#4a4a3a','#5a7a2a','#7a9a3a','#7a9a3a','#7a9a3a','#8aaa4a',_N],
+    [_N,     _N,     _N,     '#4a4a3a','#4a4a3a','#4a4a3a','#4a4a3a','#5a7a2a','#ff0000','#7a9a3a',_N,     _N],
+    [_N,     _N,     '#8aaa4a','#4a4a3a','#4a4a3a','#4a4a3a','#4a4a3a','#5a7a2a','#7a9a3a','#7a9a3a',_N,     _N],
+    [_N,     _N,     _N,     '#4a4a3a','#4a4a3a','#4a4a3a','#4a4a3a','#5a7a2a','#7a9a3a','#7a9a3a',_N,     _N],
+    [_N,     _N,     _N,     '#4a4a3a','#4a4a3a','#4a4a3a','#4a4a3a','#5a7a2a','#ff0000','#7a9a3a',_N,     _N],
+    [_N,     _N,     '#3a3a2a','#4a4a3a','#4a4a3a','#4a4a3a','#5a7a2a','#7a9a3a','#7a9a3a','#7a9a3a','#8aaa4a',_N],
+    [_N,     _N,     _N,     _N,     '#4a4a3a','#5a7a2a','#7a9a3a','#7a9a3a','#7a9a3a','#5a7a2a',_N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     '#8aaa4a','#7a9a3a','#7a9a3a','#7a9a3a',_N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
     [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
 ];
 
 const SPRITE_OLIGARCH = [
+//   0       1       2       3       4       5       6       7       8       9      10      11
+// Top-down: skin head (right), black suit body (center), white collar separates, gold chain, sunglasses
     [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     '#111',  '#111',  '#111',  _N,     _N,     _N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     '#d4a574','#d4a574','#d4a574','#d4a574','#222',  _N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     '#d4a574','#d4a574','#d4a574','#d4a574','#222',  _N,     _N,     _N,     _N],
-    [_N,     _N,     '#1a1a1a','#1a1a1a','#ffd700','#1a1a1a','#1a1a1a','#1a1a1a','#c0c0c0','#c0c0c0',_N, _N],
-    [_N,     _N,     '#111',  '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N],
-    [_N,     _N,     '#111',  '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     '#111',  '#111',  '#111',  '#111',  _N,     _N,     _N,     _N,     _N],
-    [_N,     _N,     _N,     _N,     '#111',  '#111',  _N,     _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     '#2a1a0a','#2a1a0a','#d4a574','#d4a574',_N,     _N,     _N],
+    [_N,     _N,     _N,     '#1a1a1a','#1a1a1a','#cccccc','#d4a574','#d4a574','#d4a574','#d4a574',_N,     _N],
+    [_N,     '#333',  '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a','#cccccc','#d4a574','#222',  '#d4a574',_N,     _N],
+    [_N,     _N,     '#1a1a1a','#1a1a1a','#1a1a1a','#ffd700','#1a1a1a','#cccccc','#d4a574','#d4a574',_N,     _N],
+    [_N,     _N,     '#1a1a1a','#1a1a1a','#1a1a1a','#ffd700','#1a1a1a','#cccccc','#d4a574','#d4a574',_N,     _N],
+    [_N,     '#333',  '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a','#cccccc','#d4a574','#222',  '#d4a574',_N,     _N],
+    [_N,     _N,     _N,     '#1a1a1a','#1a1a1a','#cccccc','#d4a574','#d4a574','#d4a574','#d4a574',_N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     '#2a1a0a','#2a1a0a','#d4a574','#d4a574',_N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
     [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
 ];
 
@@ -46,17 +49,19 @@ const SPRITE_TANK = [
 ];
 
 const SPRITE_BEAR = [
-    [_N,     _N,     _N,     '#6b3410','#d4956a',_N,     _N,     '#6b3410','#d4956a',_N,     _N,     _N],
-    [_N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N],
-    [_N,     '#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#c49a6c',_N],
-    ['#ffcc00','#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#111',  '#8B4513','#c49a6c',_N],
-    [_N,     '#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#c49a6c','#111'],
-    [_N,     '#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#111',  '#8B4513','#c49a6c',_N],
-    [_N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N],
-    [_N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N],
-    [_N,     _N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N,     _N],
-    [_N,     _N,     _N,     '#6b3410','#8B4513','#8B4513','#8B4513','#8B4513','#6b3410',_N,     _N,     _N],
-    [_N,     _N,     _N,     _N,     '#6b3410','#6b3410','#6b3410','#6b3410',_N,     _N,     _N,     _N],
+//   0       1       2       3       4       5       6       7       8       9      10      11
+// Top-down bear facing right: round body, ears at back(left), snout at front(right), fez on head, nose
+    ['#6b3410','#c9816a','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N,     _N],
+    ['#6b3410','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#c49a6c',_N,     _N],
+    [_N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#111',  '#c49a6c','#c49a6c',_N,     _N],
+    [_N,     '#8B4513','#8B4513','#cc0000','#cc0000','#8B4513','#8B4513','#8B4513','#c49a6c','#c49a6c',_N,     _N],
+    [_N,     '#8B4513','#ffcc00','#cc0000','#cc0000','#8B4513','#8B4513','#8B4513','#c49a6c','#c49a6c','#222',  _N],
+    [_N,     '#8B4513','#8B4513','#cc0000','#cc0000','#8B4513','#8B4513','#8B4513','#c49a6c','#c49a6c',_N,     _N],
+    [_N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#111',  '#c49a6c','#c49a6c',_N,     _N],
+    ['#6b3410','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#c49a6c',_N,     _N],
+    ['#6b3410','#c9816a','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
     [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
 ];
 
@@ -461,31 +466,15 @@ class Player {
     }
 
     drawMutant(ctx) {
-        // Walk cycle: alternate foot offset when moving
-        const moving = Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01;
-        const walkPhase = moving ? Math.floor(this.time / 250) % 2 : 0;
         drawRotatedPixelSprite(ctx, this.x, this.y, SPRITE_MUTANT, this.angle);
 
-        // Walk animation: shift feet pixels
-        if (moving && walkPhase === 1) {
-            const pw = PIXEL_SIZE;
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.rotate(this.angle);
-            // Draw alternate foot position
-            ctx.fillStyle = '#3a5a1a';
-            ctx.fillRect(-pw * 2, pw * 4, pw, pw);
-            ctx.fillRect(pw, pw * 4, pw, pw);
-            ctx.restore();
-        }
-
-        // Red eye glow
+        // Red eye glow overlay
         ctx.save();
         ctx.shadowColor = '#ff0000';
-        ctx.shadowBlur = 6;
+        ctx.shadowBlur = 8;
         ctx.fillStyle = '#ff0000';
-        const eyeDist = 6 * PIXEL_SIZE;
-        for (const offset of [-0.3, 0.3]) {
+        const eyeDist = 4 * PIXEL_SIZE;
+        for (const offset of [-0.35, 0.35]) {
             ctx.beginPath();
             ctx.arc(
                 this.x + Math.cos(this.angle + offset) * eyeDist,
@@ -499,30 +488,15 @@ class Player {
     }
 
     drawOligarch(ctx) {
-        const moving = Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01;
-        const walkPhase = moving ? Math.floor(this.time / 250) % 2 : 0;
         drawRotatedPixelSprite(ctx, this.x, this.y, SPRITE_OLIGARCH, this.angle);
 
-        // Walk animation: shift feet
-        if (moving && walkPhase === 1) {
-            const pw = PIXEL_SIZE;
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.rotate(this.angle);
-            ctx.fillStyle = '#111';
-            ctx.fillRect(-pw * 2, pw * 4, pw, pw);
-            ctx.fillRect(pw, pw * 4, pw, pw);
-            ctx.restore();
-        }
-
-        // Sunglasses glint
-        const glint = Math.sin(this.time * 0.003) > 0.8;
-        if (glint) {
+        // Sunglasses glint — periodic white sparkle
+        if (Math.sin(this.time * 0.003) > 0.8) {
             ctx.save();
             ctx.translate(this.x, this.y);
             ctx.rotate(this.angle);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.fillRect(PIXEL_SIZE * 3, -PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
+            ctx.fillRect(PIXEL_SIZE * 2, -PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE);
             ctx.restore();
         }
     }
@@ -597,12 +571,13 @@ class Player {
             ctx.shadowColor = '#ff0000';
             ctx.shadowBlur = 10;
             ctx.fillStyle = '#ff0000';
-            const eyeDist = 4 * pw;
-            for (const offset of [-0.35, 0.35]) {
+            // Eyes at row 2 & 6, col 7 in sprite → offset from center
+            const eyeX = 2.5 * pw;  // col 7 from center (col 6)
+            for (const side of [-2.5, 2.5]) {
                 ctx.beginPath();
                 ctx.arc(
-                    this.x + Math.cos(this.angle + offset) * eyeDist,
-                    this.y + Math.sin(this.angle + offset) * eyeDist,
+                    this.x + Math.cos(this.angle) * eyeX + Math.cos(this.angle + Math.PI / 2) * side * pw,
+                    this.y + Math.sin(this.angle) * eyeX + Math.sin(this.angle + Math.PI / 2) * side * pw,
                     pw, 0, Math.PI * 2
                 );
                 ctx.fill();
