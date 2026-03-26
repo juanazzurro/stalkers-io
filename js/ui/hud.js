@@ -199,7 +199,7 @@ class HUD {
         if (this.minimapFrame % 5 === 0) {
             const mc = this.minimapCache.getContext('2d');
             mc.clearRect(0, 0, mmSize, mmSize);
-            const scale = mmSize / 3000;
+            const scale = mmSize / MAP_PIXEL_W;
 
             // Background
             mc.fillStyle = 'rgba(0,0,0,0.6)';
@@ -207,6 +207,15 @@ class HUD {
             mc.strokeStyle = '#444';
             mc.lineWidth = 1;
             mc.strokeRect(0, 0, mmSize, mmSize);
+
+            // Wall layout
+            if (typeof MAP_WALL_OBSTACLES !== 'undefined') {
+                mc.fillStyle = '#333';
+                for (const obs of MAP_WALL_OBSTACLES) {
+                    mc.fillRect(obs.x * scale, obs.y * scale,
+                                Math.max(1, obs.w * scale), Math.max(1, obs.h * scale));
+                }
+            }
 
             // XP orbs
             if (xpOrbs) {

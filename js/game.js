@@ -3,8 +3,8 @@ class Game {
         this.canvas = canvas;
         this.state = 'menu'; // menu, charSelect, playing, paused, levelup, gameover
 
-        this.mapWidth = 3000;
-        this.mapHeight = 3000;
+        this.mapWidth = MAP_PIXEL_W;
+        this.mapHeight = MAP_PIXEL_H;
 
         this.camera = new Camera(canvas);
         this.renderer = new Renderer(this.mapWidth, this.mapHeight);
@@ -52,6 +52,7 @@ class Game {
         this.particles.clear();
         this.shakeTimer = 0;
         this.obstacles = MAP_OBSTACLES.map(o => ({ ...o }));
+        this.renderer.initTileMap(MAP_LAYOUT);
         this.pickups = [];
         this.pickupSpawnTimer = 15000; // First pickup at 15s
         this.bloodStains = [];
@@ -192,6 +193,7 @@ class Game {
     }
 
     updateGameplay(dt) {
+        this.renderer.updateTime(dt);
         this.stats.timeElapsed += dt;
 
         // Wave system
@@ -557,6 +559,11 @@ class Game {
         this.particles.draw(ctx);
 
         ctx.restore();
+
+        // Post-processing (screen space)
+        this.renderer.drawVignette(ctx, this.canvas.width, this.canvas.height);
+        this.renderer.drawScanlines(ctx, this.canvas.width, this.canvas.height);
+        this.renderer.drawFilmGrain(ctx, this.canvas.width, this.canvas.height);
     }
 
     renderWaveAnnouncement(ctx) {

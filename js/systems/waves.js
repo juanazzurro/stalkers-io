@@ -2,6 +2,7 @@ class WaveManager {
     constructor(mapWidth, mapHeight) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
+        this.spawnPoints = (typeof MAP_SPAWN_POINTS !== 'undefined') ? MAP_SPAWN_POINTS : [];
         this.wave = 1;
         this.state = 'announce'; // announce, active, break
         this.timer = 0;
@@ -109,6 +110,33 @@ class WaveManager {
     }
 
     getSpawnPos(player) {
+        if (this.spawnPoints.length === 0) {
+            return this._getRandomEdgePos(player);
+        }
+
+        let best = null;
+        let bestDist = 0;
+
+        for (let attempt = 0; attempt < 10; attempt++) {
+            const sp = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+            const x = sp.x + (Math.random() - 0.5) * 32;
+            const y = sp.y + (Math.random() - 0.5) * 32;
+            const dist = Math.hypot(x - player.x, y - player.y);
+
+            if (dist >= 500) {
+                return { x, y };
+            }
+
+            if (dist > bestDist) {
+                bestDist = dist;
+                best = { x, y };
+            }
+        }
+
+        return best;
+    }
+
+    _getRandomEdgePos(player) {
         let x, y;
         do {
             const edge = Math.floor(Math.random() * 4);
