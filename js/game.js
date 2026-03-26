@@ -265,8 +265,9 @@ class Game {
         for (const p of this.enemyProjectiles) p.update(this.mapWidth, this.mapHeight);
         this.enemyProjectiles = this.enemyProjectiles.filter(p => !p.dead);
 
-        // Collisions
-        CollisionSystem.check(this.player, this.enemies, this.projectiles, this.enemyProjectiles, this.xpOrbs, this.stats);
+        // Collisions (spatial grid for performance)
+        const gridData = CollisionSystem.buildGrid(this.enemies, this.mapWidth, this.mapHeight);
+        CollisionSystem.check(this.player, this.enemies, this.projectiles, this.enemyProjectiles, this.xpOrbs, this.stats, gridData);
 
         // Kamikaze explosion shake
         for (const enemy of this.enemies) {
@@ -466,6 +467,7 @@ class Game {
 
         this.camera.update(this.player);
         this.input.updateMouse(this.camera);
+        this.input.updateAutoAim(this.player, this.enemies);
     }
 
     render(ctx) {
@@ -485,6 +487,7 @@ class Game {
             case 'paused':
                 this.renderWorld(ctx);
                 this.hud.draw(ctx, this.player, this.waveManager, this.enemies, this.stats, this.xpOrbs, this.killPopTimer);
+                this.input.drawTouchControls(ctx);
                 this.renderWaveAnnouncement(ctx);
                 if (this.state === 'levelup') {
                     this.levelUpUI.draw(ctx);

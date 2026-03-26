@@ -13,7 +13,7 @@ class MainMenu {
 
     makeParticle() {
         return {
-            x: Math.random() * 3000,
+            x: Math.random() * this.canvas.width,
             y: Math.random() * this.canvas.height,
             speed: 0.3 + Math.random() * 0.7,
             size: 1 + Math.random() * 3,
@@ -572,7 +572,7 @@ class PauseUI {
         const w = this.canvas.width;
         const h = this.canvas.height;
         const cx = w / 2;
-        const btnW = 220;
+        const btnW = 180;
         const btnH = 44;
         const resumeY = h * 0.55;
         const quitY = h * 0.55 + 60;
@@ -605,15 +605,15 @@ class PauseUI {
         ctx.shadowBlur = 10;
         ctx.font = 'bold 48px monospace';
         ctx.fillStyle = '#fff';
-        ctx.fillText('\u041F\u0410\u0423\u0417\u0410', cx, h * 0.35);
+        ctx.fillText('\u0420\u0410US\u0415D', cx, h * 0.35);
         ctx.shadowBlur = 0;
         ctx.restore();
 
         // Buttons
-        const btnW = 220;
+        const btnW = 180;
         const btnH = 44;
-        this.drawButton(ctx, cx, h * 0.55, btnW, btnH, '\u041F\u0420\u041E\u0414\u041E\u041B\u0416\u0418\u0422\u042C', this.hoverResume, '#4488ff');
-        this.drawButton(ctx, cx, h * 0.55 + 60, btnW, btnH, '\u0412\u042B\u0425\u041E\u0414', this.hoverQuit, '#cc3300');
+        this.drawButton(ctx, cx, h * 0.55, btnW, btnH, '\u25B6  \u042F\u0415SU\u041C\u0415', this.hoverResume, '#4488ff');
+        this.drawButton(ctx, cx, h * 0.55 + 60, btnW, btnH, '\u0415\u0425I\u0422', this.hoverQuit, '#cc3300');
 
         // Hint
         ctx.textAlign = 'center';

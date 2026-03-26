@@ -59,7 +59,7 @@ class Player {
     }
 
     xpToLevel() {
-        return Math.floor(100 * Math.pow(this.level, 1.3));
+        return Math.floor(100 * Math.pow(this.level, 1.15));
     }
 
     addXP(amount) {

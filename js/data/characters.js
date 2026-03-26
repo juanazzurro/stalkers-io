@@ -1,7 +1,7 @@
 const CHARACTERS = {
     MUTANT: {
         name: 'Grigori',
-        hp: 90,
+        hp: 100,
         speed: 3.5,
         damage: 8,
         fireRate: 4,
@@ -14,7 +14,7 @@ const CHARACTERS = {
     },
     OLIGARCH: {
         name: 'Viktor',
-        hp: 80,
+        hp: 88,
         speed: 3,
         damage: 12,
         fireRate: 2,
@@ -27,7 +27,7 @@ const CHARACTERS = {
     },
     TANK: {
         name: 'T-72',
-        hp: 200,
+        hp: 220,
         speed: 1.5,
         damage: 25,
         fireRate: 0.5,
@@ -40,7 +40,7 @@ const CHARACTERS = {
     },
     BEAR: {
         name: 'Misha',
-        hp: 130,
+        hp: 143,
         speed: 3,
         damage: 6,
         fireRate: 5,

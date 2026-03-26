@@ -1,4 +1,6 @@
 class CollisionSystem {
+    static CELL_SIZE = 150;
+
     static circleHit(x1, y1, r1, x2, y2, r2) {
         const dx = x2 - x1;
         const dy = y2 - y1;
@@ -18,13 +20,52 @@ class CollisionSystem {
         }
     }
 
-    static check(player, enemies, playerProj, enemyProj, xpOrbs, stats) {
-        // Player projectiles vs enemies
+    static buildGrid(enemies, mapW, mapH) {
+        const cs = this.CELL_SIZE;
+        const cols = Math.ceil(mapW / cs);
+        const rows = Math.ceil(mapH / cs);
+        const grid = new Array(cols * rows);
+        for (let i = 0; i < grid.length; i++) grid[i] = null;
+
+        for (const e of enemies) {
+            if (e.dying || e.removed) continue;
+            const cx = Math.min(Math.floor(e.x / cs), cols - 1);
+            const cy = Math.min(Math.floor(e.y / cs), rows - 1);
+            const idx = cy * cols + cx;
+            if (!grid[idx]) grid[idx] = [];
+            grid[idx].push(e);
+        }
+        return { grid, cols, rows };
+    }
+
+    static getNearby(gridData, x, y, radius) {
+        const cs = this.CELL_SIZE;
+        const { grid, cols, rows } = gridData;
+        const minCx = Math.max(0, Math.floor((x - radius) / cs));
+        const maxCx = Math.min(cols - 1, Math.floor((x + radius) / cs));
+        const minCy = Math.max(0, Math.floor((y - radius) / cs));
+        const maxCy = Math.min(rows - 1, Math.floor((y + radius) / cs));
+        const result = [];
+        for (let cy = minCy; cy <= maxCy; cy++) {
+            for (let cx = minCx; cx <= maxCx; cx++) {
+                const cell = grid[cy * cols + cx];
+                if (cell) {
+                    for (const e of cell) result.push(e);
+                }
+            }
+        }
+        return result;
+    }
+
+    static check(player, enemies, playerProj, enemyProj, xpOrbs, stats, gridData) {
+        // Player projectiles vs enemies (using spatial grid)
         for (const proj of playerProj) {
             if (proj.dead) continue;
             const pr = this.projRadius(proj.type);
+            const searchRadius = pr + 30 + (proj.aoeRadius || 0);
+            const nearby = gridData ? this.getNearby(gridData, proj.x, proj.y, searchRadius) : enemies;
 
-            for (const enemy of enemies) {
+            for (const enemy of nearby) {
                 if (enemy.dying) continue;
                 if (proj.hitTargets.has(enemy)) continue;
                 if (!this.circleHit(proj.x, proj.y, pr, enemy.x, enemy.y, enemy.size)) continue;
@@ -35,7 +76,8 @@ class CollisionSystem {
 
                 // AOE
                 if (proj.aoeRadius > 0) {
-                    for (const other of enemies) {
+                    const aoeNearby = gridData ? this.getNearby(gridData, proj.x, proj.y, proj.aoeRadius + 30) : enemies;
+                    for (const other of aoeNearby) {
                         if (other === enemy || other.dying) continue;
                         if (this.circleHit(proj.x, proj.y, proj.aoeRadius, other.x, other.y, other.size)) {
                             other.takeDamage(proj.damage * 0.5);
@@ -92,11 +134,11 @@ class CollisionSystem {
                 dmg *= (1 - player.data.passiveDmgReduction);
             }
             player.hp = Math.max(0, player.hp - dmg);
-            if (stats) stats.streak = 0;
+            if (stats) { stats.streak = 0; }
             enemy.hp = 0;
             enemy.die();
             this.spawnXP(enemy, xpOrbs);
-            if (stats) { stats.kills++; stats.bestStreak = Math.max(stats.bestStreak, stats.streak); }
+            if (stats) { stats.kills++; stats.streak++; stats.bestStreak = Math.max(stats.bestStreak, stats.streak); }
         }
     }
 
@@ -163,18 +205,30 @@ class CollisionSystem {
 
             // Player vs obstacle
             if (isCircle) {
-                this.pushCircleOutOfCircle(player, obs.x, obs.y, obs.radius);
+                if (this.pushCircleOutOfCircle(player, obs.x, obs.y, obs.radius)) {
+                    player.x = Math.max(player.size, Math.min(player.mapWidth - player.size, player.x));
+                    player.y = Math.max(player.size, Math.min(player.mapHeight - player.size, player.y));
+                }
             } else {
-                this.pushCircleOutOfRect(player, obs.x, obs.y, obs.w, obs.h);
+                if (this.pushCircleOutOfRect(player, obs.x, obs.y, obs.w, obs.h)) {
+                    player.x = Math.max(player.size, Math.min(player.mapWidth - player.size, player.x));
+                    player.y = Math.max(player.size, Math.min(player.mapHeight - player.size, player.y));
+                }
             }
 
             // Enemies vs obstacle
             for (const enemy of enemies) {
                 if (enemy.dying) continue;
                 if (isCircle) {
-                    this.pushCircleOutOfCircle(enemy, obs.x, obs.y, obs.radius);
+                    if (this.pushCircleOutOfCircle(enemy, obs.x, obs.y, obs.radius)) {
+                        enemy.x = Math.max(enemy.size, Math.min(enemy.mapWidth - enemy.size, enemy.x));
+                        enemy.y = Math.max(enemy.size, Math.min(enemy.mapHeight - enemy.size, enemy.y));
+                    }
                 } else {
-                    this.pushCircleOutOfRect(enemy, obs.x, obs.y, obs.w, obs.h);
+                    if (this.pushCircleOutOfRect(enemy, obs.x, obs.y, obs.w, obs.h)) {
+                        enemy.x = Math.max(enemy.size, Math.min(enemy.mapWidth - enemy.size, enemy.x));
+                        enemy.y = Math.max(enemy.size, Math.min(enemy.mapHeight - enemy.size, enemy.y));
+                    }
                 }
             }
 

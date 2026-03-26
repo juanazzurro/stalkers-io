@@ -4,6 +4,7 @@ class ParticleSystem {
     }
 
     emit(x, y, count, config) {
+        if (this.particles.length >= 200) return;
         for (let i = 0; i < count; i++) {
             const angle = config.angle !== undefined
                 ? config.angle + (Math.random() - 0.5) * (config.spread || 0)

@@ -30,8 +30,11 @@ class WaveManager {
         }
 
         if (this.state === 'active') {
-            const alive = enemies.filter(e => !e.dying && !e.removed);
-            if (alive.length === 0) {
+            let alive = 0;
+            for (let i = 0; i < enemies.length; i++) {
+                if (!enemies[i].dying && !enemies[i].removed) { alive++; break; }
+            }
+            if (alive === 0) {
                 this.state = 'break';
                 this.timer = 0;
             }
@@ -77,7 +80,7 @@ class WaveManager {
         if (this.wave <= 5) return 2 + this.wave;
         if (this.wave <= 10) return 4 + this.wave;
         if (this.wave <= 15) return 7 + this.wave;
-        return 9 + this.wave;
+        return Math.ceil((9 + this.wave) * 1.2);
     }
 
     getEnemyTypes() {

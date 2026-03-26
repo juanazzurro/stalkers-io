@@ -6,6 +6,11 @@ class HUD {
         for (let i = 0; i < 40; i++) {
             this.snowParticles.push(this.makeSnow());
         }
+        // Minimap throttle
+        this.minimapFrame = 0;
+        this.minimapCache = document.createElement('canvas');
+        this.minimapCache.width = 160;
+        this.minimapCache.height = 160;
     }
 
     makeSnow() {
@@ -188,43 +193,50 @@ class HUD {
         const mmSize = 160;
         const mmX = (this.canvas.width - mmSize) / 2;
         const mmY = this.canvas.height - mmSize - 12;
-        const scale = mmSize / 3000;
 
-        // Background
-        ctx.fillStyle = 'rgba(0,0,0,0.6)';
-        ctx.fillRect(mmX, mmY, mmSize, mmSize);
-        ctx.strokeStyle = '#444';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(mmX, mmY, mmSize, mmSize);
+        // Only redraw offscreen cache every 5 frames
+        this.minimapFrame++;
+        if (this.minimapFrame % 5 === 0) {
+            const mc = this.minimapCache.getContext('2d');
+            mc.clearRect(0, 0, mmSize, mmSize);
+            const scale = mmSize / 3000;
 
-        // XP orbs
-        if (xpOrbs) {
-            for (const orb of xpOrbs) {
-                if (orb.collected) continue;
-                ctx.fillStyle = orb.color || '#ffd700';
-                ctx.beginPath();
-                ctx.arc(mmX + orb.x * scale, mmY + orb.y * scale, 1.5, 0, Math.PI * 2);
-                ctx.fill();
+            // Background
+            mc.fillStyle = 'rgba(0,0,0,0.6)';
+            mc.fillRect(0, 0, mmSize, mmSize);
+            mc.strokeStyle = '#444';
+            mc.lineWidth = 1;
+            mc.strokeRect(0, 0, mmSize, mmSize);
+
+            // XP orbs
+            if (xpOrbs) {
+                for (const orb of xpOrbs) {
+                    if (orb.collected) continue;
+                    mc.fillStyle = orb.color || '#ffd700';
+                    mc.beginPath();
+                    mc.arc(orb.x * scale, orb.y * scale, 1.5, 0, Math.PI * 2);
+                    mc.fill();
+                }
             }
+
+            // Enemies (red dots)
+            mc.fillStyle = '#ff3333';
+            for (const e of enemies) {
+                if (e.dying || e.removed) continue;
+                const r = e.data.behavior === 'boss' ? 3 : 1.5;
+                mc.beginPath();
+                mc.arc(e.x * scale, e.y * scale, r, 0, Math.PI * 2);
+                mc.fill();
+            }
+
+            // Player (green dot)
+            mc.fillStyle = '#33ff33';
+            mc.beginPath();
+            mc.arc(player.x * scale, player.y * scale, 3, 0, Math.PI * 2);
+            mc.fill();
         }
 
-        // Enemies (red dots)
-        ctx.fillStyle = '#ff3333';
-        for (const e of enemies) {
-            if (e.dying || e.removed) continue;
-            const ex = mmX + e.x * scale;
-            const ey = mmY + e.y * scale;
-            const r = e.data.behavior === 'boss' ? 3 : 1.5;
-            ctx.beginPath();
-            ctx.arc(ex, ey, r, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // Player (green dot)
-        ctx.fillStyle = '#33ff33';
-        ctx.beginPath();
-        ctx.arc(mmX + player.x * scale, mmY + player.y * scale, 3, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.drawImage(this.minimapCache, mmX, mmY);
     }
 
     drawPortrait(ctx, player) {
