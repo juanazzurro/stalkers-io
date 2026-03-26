@@ -1,3 +1,88 @@
+// ===== PIXEL ART PLAYER SPRITES (12x12, facing right) =====
+const _N = null;
+const SPRITE_MUTANT = [
+//   0       1       2       3       4       5       6       7       8       9      10      11
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     '#6aaa3a',_N,    _N,     _N,     _N],
+    [_N,     _N,     '#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#ff0000','#3a5a1a',_N,_N],
+    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#6aaa3a','#4a7a2a','#6aaa3a',_N],
+    [_N,     '#6aaa3a','#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#ff0000','#3a5a1a',_N,_N],
+    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#6aaa3a',_N],
+    [_N,     _N,     '#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N],
+    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N,     _N],
+    [_N,     '#6aaa3a','#3a5a1a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N,     _N,     _N],
+    [_N,     _N,     '#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a','#4a7a2a',_N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     '#3a5a1a','#4a7a2a','#4a7a2a','#3a5a1a',_N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     '#3a5a1a','#3a5a1a',_N,     _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
+];
+
+const SPRITE_OLIGARCH = [
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     '#111',  '#111',  '#111',  _N,     _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     '#d4a574','#d4a574','#d4a574','#d4a574','#222',  _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     '#d4a574','#d4a574','#d4a574','#d4a574','#222',  _N,     _N,     _N,     _N],
+    [_N,     _N,     '#1a1a1a','#1a1a1a','#ffd700','#1a1a1a','#1a1a1a','#1a1a1a','#c0c0c0','#c0c0c0',_N, _N],
+    [_N,     _N,     '#111',  '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N],
+    [_N,     _N,     '#111',  '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     '#1a1a1a','#1a1a1a','#1a1a1a','#1a1a1a',_N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     '#111',  '#111',  '#111',  '#111',  _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     '#111',  '#111',  _N,     _N,     _N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
+];
+
+const SPRITE_TANK = [
+//  16x10 tank sprite — wider format
+    ['#333', '#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#333'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#3a4a1a','#333'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#5a6a3a','#5a6a3a','#5a6a3a','#5a6a3a','#5a6a3a','#5a6a3a','#4a5a2a','#4a5a2a','#4a5a2a','#3a4a1a','#333'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#5a6a3a','#5a6a3a','#8b1a1a','#8b1a1a','#8b1a1a','#5a6a3a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#5a6a3a','#8b1a1a','#8b1a1a','#8b1a1a','#8b1a1a','#8b1a1a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#5a6a3a','#8b1a1a','#8b1a1a','#8b1a1a','#8b1a1a','#8b1a1a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#5a6a3a','#5a6a3a','#8b1a1a','#8b1a1a','#8b1a1a','#5a6a3a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a','#3a3a3a'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#5a6a3a','#5a6a3a','#5a6a3a','#5a6a3a','#5a6a3a','#5a6a3a','#4a5a2a','#4a5a2a','#4a5a2a','#3a4a1a','#333'],
+    ['#333', '#3a4a1a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#3a4a1a','#333'],
+    ['#333', '#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#4a5a2a','#333'],
+];
+
+const SPRITE_BEAR = [
+    [_N,     _N,     _N,     '#6b3410','#d4956a',_N,     _N,     '#6b3410','#d4956a',_N,     _N,     _N],
+    [_N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N],
+    [_N,     '#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#c49a6c',_N],
+    ['#ffcc00','#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#111',  '#8B4513','#c49a6c',_N],
+    [_N,     '#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#c49a6c','#111'],
+    [_N,     '#cc0000','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#111',  '#8B4513','#c49a6c',_N],
+    [_N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N],
+    [_N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N],
+    [_N,     _N,     _N,     '#8B4513','#8B4513','#8B4513','#8B4513','#8B4513','#8B4513',_N,     _N,     _N],
+    [_N,     _N,     _N,     '#6b3410','#8B4513','#8B4513','#8B4513','#8B4513','#6b3410',_N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     '#6b3410','#6b3410','#6b3410','#6b3410',_N,     _N,     _N,     _N],
+    [_N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N,     _N],
+];
+
+// Helper: draw a pixel sprite rotated around (cx, cy)
+function drawRotatedPixelSprite(ctx, cx, cy, sprite, angle, scale) {
+    scale = scale || 1;
+    var rows = sprite.length;
+    var cols = sprite[0].length;
+    var pw = PIXEL_SIZE * scale;
+    var ox = -(cols * pw) / 2;
+    var oy = -(rows * pw) / 2;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+            var color = sprite[r][c];
+            if (!color) continue;
+            ctx.fillStyle = color;
+            ctx.fillRect(ox + c * pw, oy + r * pw, pw, pw);
+        }
+    }
+    ctx.restore();
+}
+
 class Player {
     constructor(charData, mapWidth, mapHeight) {
         this.data = charData;
@@ -42,6 +127,10 @@ class Player {
         this.pickupInvulnTimer = 0;
         this.flashTimer = 0;
         this.flashColor = '#88ff88';
+
+        // Movement tracking for walk animation
+        this.vx = 0;
+        this.vy = 0;
 
         this.recalcStats();
     }
@@ -133,8 +222,10 @@ class Player {
             speed *= (1 + this.data.passiveSpeedBoost);
         }
 
-        this.x += dir.x * speed;
-        this.y += dir.y * speed;
+        this.vx = dir.x * speed;
+        this.vy = dir.y * speed;
+        this.x += this.vx;
+        this.y += this.vy;
 
         this.x = Math.max(this.size, Math.min(this.mapWidth - this.size, this.x));
         this.y = Math.max(this.size, Math.min(this.mapHeight - this.size, this.y));
@@ -257,40 +348,48 @@ class Player {
     }
 
     drawPassiveEffects(ctx) {
-        // Mutant radiation aura
+        // Mutant radiation aura — pixelated scattered squares
         if (this.data.passiveRadius) {
+            const pw = PIXEL_SIZE;
             const pulse = 0.15 + Math.sin(this.time * 0.004) * 0.08;
             ctx.fillStyle = 'rgba(57, 255, 20, ' + pulse + ')';
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.data.passiveRadius, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(57, 255, 20, ' + (pulse + 0.05) + ')';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.data.passiveRadius, 0, Math.PI * 2);
-            ctx.stroke();
+
+            // Pixelated radiation particles orbiting
+            const particleCount = 8;
+            for (let i = 0; i < particleCount; i++) {
+                const a = (this.time * 0.002) + (i / particleCount) * Math.PI * 2;
+                const dist = this.data.passiveRadius * (0.5 + Math.sin(this.time * 0.003 + i) * 0.3);
+                const px = this.x + Math.cos(a) * dist;
+                const py = this.y + Math.sin(a) * dist;
+                ctx.fillStyle = 'rgba(57, 255, 20, ' + (0.4 + Math.sin(this.time * 0.005 + i) * 0.2) + ')';
+                ctx.fillRect(Math.floor(px / pw) * pw, Math.floor(py / pw) * pw, pw, pw);
+            }
         }
 
-        // Bear low HP visual
+        // Bear low HP visual — pixelated red claw marks
         if (this.data.passiveSpeedBoost && this.hp / this.maxHp < 0.3) {
-            // Red claw marks on sides
-            ctx.strokeStyle = '#ff2200';
-            ctx.lineWidth = 2;
+            const pw = PIXEL_SIZE;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
             ctx.shadowColor = '#ff0000';
             ctx.shadowBlur = 6;
-            const perpAngle = this.angle + Math.PI / 2;
+            ctx.fillStyle = '#ff2200';
+            // Three claw marks on each side
             for (const side of [-1, 1]) {
-                const bx = this.x + Math.cos(perpAngle) * side * (this.size + 8);
-                const by = this.y + Math.sin(perpAngle) * side * (this.size + 8);
+                const sx = 0;
+                const sy = side * (this.size + 6);
                 for (let c = -1; c <= 1; c++) {
-                    ctx.beginPath();
-                    const offset = c * 4;
-                    ctx.moveTo(bx + Math.cos(this.angle) * (offset - 5), by + Math.sin(this.angle) * (offset - 5));
-                    ctx.lineTo(bx + Math.cos(this.angle) * (offset + 5), by + Math.sin(this.angle) * (offset + 5));
-                    ctx.stroke();
+                    for (let l = -2; l <= 2; l++) {
+                        ctx.fillRect(sx + (c * 3 + l) * pw, sy, pw, pw);
+                    }
                 }
             }
             ctx.shadowBlur = 0;
+            ctx.restore();
         }
     }
 
@@ -362,203 +461,155 @@ class Player {
     }
 
     drawMutant(ctx) {
-        ctx.fillStyle = '#2d8a2d';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        // Walk cycle: alternate foot offset when moving
+        const moving = Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01;
+        const walkPhase = moving ? Math.floor(this.time / 250) % 2 : 0;
+        drawRotatedPixelSprite(ctx, this.x, this.y, SPRITE_MUTANT, this.angle);
 
-        ctx.fillStyle = '#1a6b1a';
-        for (let i = 0; i < 4; i++) {
-            const a = this.angle + (Math.PI / 2) * i;
-            ctx.beginPath();
-            ctx.arc(
-                this.x + Math.cos(a) * (this.size - 2),
-                this.y + Math.sin(a) * (this.size - 2),
-                7, 0, Math.PI * 2
-            );
-            ctx.fill();
+        // Walk animation: shift feet pixels
+        if (moving && walkPhase === 1) {
+            const pw = PIXEL_SIZE;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            // Draw alternate foot position
+            ctx.fillStyle = '#3a5a1a';
+            ctx.fillRect(-pw * 2, pw * 4, pw, pw);
+            ctx.fillRect(pw, pw * 4, pw, pw);
+            ctx.restore();
         }
 
+        // Red eye glow
+        ctx.save();
         ctx.shadowColor = '#ff0000';
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 6;
         ctx.fillStyle = '#ff0000';
+        const eyeDist = 6 * PIXEL_SIZE;
         for (const offset of [-0.3, 0.3]) {
             ctx.beginPath();
             ctx.arc(
-                this.x + Math.cos(this.angle + offset) * 8,
-                this.y + Math.sin(this.angle + offset) * 8,
-                3, 0, Math.PI * 2
+                this.x + Math.cos(this.angle + offset) * eyeDist,
+                this.y + Math.sin(this.angle + offset) * eyeDist,
+                PIXEL_SIZE, 0, Math.PI * 2
             );
             ctx.fill();
         }
         ctx.shadowBlur = 0;
+        ctx.restore();
     }
 
     drawOligarch(ctx) {
-        ctx.fillStyle = '#3a3a3a';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        const moving = Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01;
+        const walkPhase = moving ? Math.floor(this.time / 250) % 2 : 0;
+        drawRotatedPixelSprite(ctx, this.x, this.y, SPRITE_OLIGARCH, this.angle);
 
-        ctx.fillStyle = '#111';
-        const backAngle = this.angle + Math.PI;
-        ctx.beginPath();
-        ctx.arc(
-            this.x + Math.cos(backAngle) * 4,
-            this.y + Math.sin(backAngle) * 4,
-            this.size * 0.6, backAngle - 0.8, backAngle + 0.8
-        );
-        ctx.fill();
+        // Walk animation: shift feet
+        if (moving && walkPhase === 1) {
+            const pw = PIXEL_SIZE;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = '#111';
+            ctx.fillRect(-pw * 2, pw * 4, pw, pw);
+            ctx.fillRect(pw, pw * 4, pw, pw);
+            ctx.restore();
+        }
 
-        ctx.fillStyle = '#ffd700';
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle);
-        ctx.fillRect(-5, -2, 10, 4);
-        ctx.restore();
-
-        ctx.fillStyle = '#ddd';
-        for (const offset of [-0.35, 0.35]) {
-            ctx.beginPath();
-            ctx.arc(
-                this.x + Math.cos(this.angle + offset) * 9,
-                this.y + Math.sin(this.angle + offset) * 9,
-                2.5, 0, Math.PI * 2
-            );
-            ctx.fill();
+        // Sunglasses glint
+        const glint = Math.sin(this.time * 0.003) > 0.8;
+        if (glint) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fillRect(PIXEL_SIZE * 3, -PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
+            ctx.restore();
         }
     }
 
     drawTank(ctx) {
-        // Charge trail
+        // Charge trail (pixelated dust clouds)
         if (this.charging) {
-            ctx.fillStyle = 'rgba(100, 80, 60, 0.3)';
+            const pw = PIXEL_SIZE;
             const backAngle = this.angle + Math.PI;
             for (let i = 0; i < 5; i++) {
                 const tx = this.x + Math.cos(backAngle) * (20 + i * 15) + (Math.random() - 0.5) * 10;
                 const ty = this.y + Math.sin(backAngle) * (20 + i * 15) + (Math.random() - 0.5) * 10;
-                ctx.beginPath();
-                ctx.arc(tx, ty, 6 + i * 2, 0, Math.PI * 2);
-                ctx.fill();
+                const sz = (3 + i) * pw;
+                ctx.fillStyle = 'rgba(100, 80, 60, ' + (0.3 - i * 0.05) + ')';
+                ctx.fillRect(tx - sz / 2, ty - sz / 2, sz, sz);
             }
         }
 
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle);
+        // Track texture displacement when moving
+        const moving = Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01;
+        const trackOffset = moving ? Math.floor(this.time / 100) % 3 : 0;
 
-        ctx.fillStyle = '#4a5a2a';
-        ctx.fillRect(-this.size, -this.size * 0.6, this.size * 2, this.size * 1.2);
+        drawRotatedPixelSprite(ctx, this.x, this.y, SPRITE_TANK, this.angle);
 
-        ctx.fillStyle = '#333';
-        ctx.fillRect(-this.size, -this.size * 0.6, this.size * 2, 5);
-        ctx.fillRect(-this.size, this.size * 0.6 - 5, this.size * 2, 5);
+        // Animated track marks
+        if (moving) {
+            const pw = PIXEL_SIZE;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = '#2a2a2a';
+            for (let i = 0; i < 3; i++) {
+                const xOff = (-6 + i * 4 + trackOffset) * pw;
+                ctx.fillRect(xOff, -5 * pw, pw, pw);
+                ctx.fillRect(xOff, 4 * pw, pw, pw);
+            }
+            ctx.restore();
+        }
 
-        ctx.fillStyle = '#5a6a3a';
-        ctx.beginPath();
-        ctx.arc(0, 0, 12, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#3a3a3a';
-        ctx.fillRect(10, -3, this.size, 6);
-
-        ctx.restore();
-
-        // Invulnerability glow
+        // Invulnerability glow (pixelated border)
         if (this.invulnerable) {
-            ctx.strokeStyle = 'rgba(255, 255, 100, 0.5)';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size + 5, 0, Math.PI * 2);
-            ctx.stroke();
+            const pw = PIXEL_SIZE;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = 'rgba(255, 255, 100, 0.5)';
+            // Top and bottom border
+            for (let c = -8; c <= 8; c++) {
+                ctx.fillRect(c * pw, -6 * pw, pw, pw);
+                ctx.fillRect(c * pw, 5 * pw, pw, pw);
+            }
+            // Left and right border
+            for (let r = -5; r <= 4; r++) {
+                ctx.fillRect(-8 * pw, r * pw, pw, pw);
+                ctx.fillRect(8 * pw, r * pw, pw, pw);
+            }
+            ctx.restore();
         }
     }
 
     drawBear(ctx) {
         const lowHP = this.data.passiveSpeedBoost && this.hp / this.maxHp < 0.3;
 
-        ctx.fillStyle = '#6b3410';
-        const backAngle = this.angle + Math.PI;
-        for (const offset of [-0.5, 0.5]) {
-            ctx.beginPath();
-            ctx.arc(
-                this.x + Math.cos(backAngle + offset) * (this.size + 2),
-                this.y + Math.sin(backAngle + offset) * (this.size + 2),
-                8, 0, Math.PI * 2
-            );
-            ctx.fill();
-        }
-        ctx.fillStyle = '#d4956a';
-        for (const offset of [-0.5, 0.5]) {
-            ctx.beginPath();
-            ctx.arc(
-                this.x + Math.cos(backAngle + offset) * (this.size + 2),
-                this.y + Math.sin(backAngle + offset) * (this.size + 2),
-                4, 0, Math.PI * 2
-            );
-            ctx.fill();
-        }
+        // Breathing animation: subtle scale pulse
+        const breathScale = 1 + Math.sin(this.time * 0.004) * 0.03;
+        drawRotatedPixelSprite(ctx, this.x, this.y, SPRITE_BEAR, this.angle, breathScale);
 
-        ctx.fillStyle = '#8B4513';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#c49a6c';
-        ctx.beginPath();
-        ctx.arc(
-            this.x + Math.cos(this.angle) * 10,
-            this.y + Math.sin(this.angle) * 10,
-            10, 0, Math.PI * 2
-        );
-        ctx.fill();
-
-        ctx.fillStyle = '#222';
-        ctx.beginPath();
-        ctx.arc(
-            this.x + Math.cos(this.angle) * 16,
-            this.y + Math.sin(this.angle) * 16,
-            3, 0, Math.PI * 2
-        );
-        ctx.fill();
-
-        // Eyes — glow red when low HP
+        // Eyes glow red when low HP
         if (lowHP) {
+            const pw = PIXEL_SIZE * breathScale;
+            ctx.save();
             ctx.shadowColor = '#ff0000';
             ctx.shadowBlur = 10;
             ctx.fillStyle = '#ff0000';
-        } else {
-            ctx.fillStyle = '#111';
+            const eyeDist = 4 * pw;
+            for (const offset of [-0.35, 0.35]) {
+                ctx.beginPath();
+                ctx.arc(
+                    this.x + Math.cos(this.angle + offset) * eyeDist,
+                    this.y + Math.sin(this.angle + offset) * eyeDist,
+                    pw, 0, Math.PI * 2
+                );
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+            ctx.restore();
         }
-        for (const offset of [-0.4, 0.4]) {
-            ctx.beginPath();
-            ctx.arc(
-                this.x + Math.cos(this.angle + offset) * 13,
-                this.y + Math.sin(this.angle + offset) * 13,
-                3, 0, Math.PI * 2
-            );
-            ctx.fill();
-        }
-        if (lowHP) ctx.shadowBlur = 0;
-
-        // Fez hat
-        ctx.save();
-        const fezX = this.x + Math.cos(backAngle) * 5;
-        const fezY = this.y + Math.sin(backAngle) * 5;
-        ctx.translate(fezX, fezY);
-        ctx.rotate(this.angle - Math.PI / 2);
-        ctx.fillStyle = '#cc0000';
-        ctx.beginPath();
-        ctx.moveTo(-7, 5);
-        ctx.lineTo(0, -10);
-        ctx.lineTo(7, 5);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = '#ffcc00';
-        ctx.beginPath();
-        ctx.arc(0, -10, 2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
     }
 
     drawHPBar(ctx) {

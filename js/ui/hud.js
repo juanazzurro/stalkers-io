@@ -278,65 +278,35 @@ class HUD {
     }
 
     drawMutantMini(ctx) {
-        ctx.fillStyle = '#2d8a2d';
-        ctx.beginPath();
-        ctx.arc(0, 0, 14, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#ff0000';
-        for (const off of [-0.3, 0.3]) {
-            ctx.beginPath();
-            ctx.arc(Math.cos(off) * 6, Math.sin(off) * 6, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-        }
+        this.drawPixelSpriteMini(ctx, SPRITE_MUTANT);
     }
 
     drawOligarchMini(ctx) {
-        ctx.fillStyle = '#3a3a3a';
-        ctx.beginPath();
-        ctx.arc(0, 0, 14, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#ffd700';
-        ctx.fillRect(-4, -1.5, 8, 3);
-        ctx.fillStyle = '#ddd';
-        for (const off of [-0.35, 0.35]) {
-            ctx.beginPath();
-            ctx.arc(Math.cos(off) * 7, Math.sin(off) * 7, 2, 0, Math.PI * 2);
-            ctx.fill();
-        }
+        this.drawPixelSpriteMini(ctx, SPRITE_OLIGARCH);
     }
 
     drawTankMini(ctx) {
-        ctx.save();
-        ctx.fillStyle = '#4a5a2a';
-        ctx.fillRect(-16, -10, 32, 20);
-        ctx.fillStyle = '#5a6a3a';
-        ctx.beginPath();
-        ctx.arc(0, 0, 8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#3a3a3a';
-        ctx.fillRect(6, -2, 14, 4);
-        ctx.restore();
+        this.drawPixelSpriteMini(ctx, SPRITE_TANK);
     }
 
     drawBearMini(ctx) {
-        ctx.fillStyle = '#6b3410';
-        for (const off of [-0.5, 0.5]) {
-            ctx.beginPath();
-            ctx.arc(Math.cos(Math.PI + off) * 16, Math.sin(Math.PI + off) * 16, 6, 0, Math.PI * 2);
-            ctx.fill();
+        this.drawPixelSpriteMini(ctx, SPRITE_BEAR);
+    }
+
+    drawPixelSpriteMini(ctx, sprite) {
+        var rows = sprite.length;
+        var cols = sprite[0].length;
+        var pw = PIXEL_SIZE;
+        var ox = -(cols * pw) / 2;
+        var oy = -(rows * pw) / 2;
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var color = sprite[r][c];
+                if (!color) continue;
+                ctx.fillStyle = color;
+                ctx.fillRect(ox + c * pw, oy + r * pw, pw, pw);
+            }
         }
-        ctx.fillStyle = '#8B4513';
-        ctx.beginPath();
-        ctx.arc(0, 0, 16, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#c49a6c';
-        ctx.beginPath();
-        ctx.arc(7, 0, 7, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#222';
-        ctx.beginPath();
-        ctx.arc(11, 0, 2, 0, Math.PI * 2);
-        ctx.fill();
     }
 
     drawKillCounter(ctx, stats, killPopTimer) {

@@ -288,125 +288,27 @@ class CharSelectUI {
     }
 
     drawCharPreview(ctx, key) {
-        // Draw miniature character at origin (0,0), angle facing right
-        const angle = 0;
+        // Draw pixel art sprite at origin (0,0), facing right, scaled up for preview
+        var sprite;
+        var scale = 2;
         switch (key) {
-            case 'MUTANT': {
-                const size = 18;
-                ctx.fillStyle = '#2d8a2d';
-                ctx.beginPath();
-                ctx.arc(0, 0, size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#1a6b1a';
-                for (let i = 0; i < 4; i++) {
-                    const a = angle + (Math.PI / 2) * i;
-                    ctx.beginPath();
-                    ctx.arc(Math.cos(a) * (size - 2), Math.sin(a) * (size - 2), 7, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.shadowColor = '#ff0000';
-                ctx.shadowBlur = 8;
-                ctx.fillStyle = '#ff0000';
-                for (const off of [-0.3, 0.3]) {
-                    ctx.beginPath();
-                    ctx.arc(Math.cos(angle + off) * 8, Math.sin(angle + off) * 8, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.shadowBlur = 0;
-                break;
-            }
-            case 'OLIGARCH': {
-                const size = 18;
-                ctx.fillStyle = '#3a3a3a';
-                ctx.beginPath();
-                ctx.arc(0, 0, size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#111';
-                const ba = angle + Math.PI;
-                ctx.beginPath();
-                ctx.arc(Math.cos(ba) * 4, Math.sin(ba) * 4, size * 0.6, ba - 0.8, ba + 0.8);
-                ctx.fill();
-                ctx.fillStyle = '#ffd700';
-                ctx.save();
-                ctx.rotate(angle);
-                ctx.fillRect(-5, -2, 10, 4);
-                ctx.restore();
-                ctx.fillStyle = '#ddd';
-                for (const off of [-0.35, 0.35]) {
-                    ctx.beginPath();
-                    ctx.arc(Math.cos(angle + off) * 9, Math.sin(angle + off) * 9, 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                break;
-            }
-            case 'TANK': {
-                const size = 30;
-                ctx.save();
-                ctx.rotate(angle);
-                ctx.fillStyle = '#4a5a2a';
-                ctx.fillRect(-size, -size * 0.6, size * 2, size * 1.2);
-                ctx.fillStyle = '#333';
-                ctx.fillRect(-size, -size * 0.6, size * 2, 5);
-                ctx.fillRect(-size, size * 0.6 - 5, size * 2, 5);
-                ctx.fillStyle = '#5a6a3a';
-                ctx.beginPath();
-                ctx.arc(0, 0, 12, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#3a3a3a';
-                ctx.fillRect(10, -3, size, 6);
-                ctx.restore();
-                break;
-            }
-            case 'BEAR': {
-                const size = 25;
-                const ba = angle + Math.PI;
-                ctx.fillStyle = '#6b3410';
-                for (const off of [-0.5, 0.5]) {
-                    ctx.beginPath();
-                    ctx.arc(Math.cos(ba + off) * (size + 2), Math.sin(ba + off) * (size + 2), 8, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.fillStyle = '#d4956a';
-                for (const off of [-0.5, 0.5]) {
-                    ctx.beginPath();
-                    ctx.arc(Math.cos(ba + off) * (size + 2), Math.sin(ba + off) * (size + 2), 4, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.fillStyle = '#8B4513';
-                ctx.beginPath();
-                ctx.arc(0, 0, size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#c49a6c';
-                ctx.beginPath();
-                ctx.arc(Math.cos(angle) * 10, Math.sin(angle) * 10, 10, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#222';
-                ctx.beginPath();
-                ctx.arc(Math.cos(angle) * 16, Math.sin(angle) * 16, 3, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#111';
-                for (const off of [-0.4, 0.4]) {
-                    ctx.beginPath();
-                    ctx.arc(Math.cos(angle + off) * 13, Math.sin(angle + off) * 13, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                // Fez
-                ctx.save();
-                ctx.translate(Math.cos(ba) * 5, Math.sin(ba) * 5);
-                ctx.rotate(angle - Math.PI / 2);
-                ctx.fillStyle = '#cc0000';
-                ctx.beginPath();
-                ctx.moveTo(-7, 5);
-                ctx.lineTo(0, -10);
-                ctx.lineTo(7, 5);
-                ctx.closePath();
-                ctx.fill();
-                ctx.fillStyle = '#ffcc00';
-                ctx.beginPath();
-                ctx.arc(0, -10, 2, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-                break;
+            case 'MUTANT': sprite = SPRITE_MUTANT; break;
+            case 'OLIGARCH': sprite = SPRITE_OLIGARCH; break;
+            case 'TANK': sprite = SPRITE_TANK; scale = 1.5; break;
+            case 'BEAR': sprite = SPRITE_BEAR; break;
+            default: return;
+        }
+        var rows = sprite.length;
+        var cols = sprite[0].length;
+        var pw = PIXEL_SIZE * scale;
+        var ox = -(cols * pw) / 2;
+        var oy = -(rows * pw) / 2;
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var color = sprite[r][c];
+                if (!color) continue;
+                ctx.fillStyle = color;
+                ctx.fillRect(ox + c * pw, oy + r * pw, pw, pw);
             }
         }
     }
